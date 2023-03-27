@@ -14,7 +14,7 @@ from utils_t5_finetune import (
 )
 
 # global variables
-MODEL_VERSIONS = ["base"]
+MODEL_VERSIONS = ["base", "small"]
 FINETUNED_ON = "wikisql"
 FINETUNE_PATH = "wikisql_cosql"
 
