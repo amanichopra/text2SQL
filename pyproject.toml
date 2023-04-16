@@ -4,10 +4,9 @@ version = "0.1.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
-packages = [{include = "s23_cudsi_loreal_text2sql"}]
 
 [tool.poetry.dependencies]
-python = "^3.7.12"
+python = "^3.9"
 nltk = "^3.8.1"
 torch = "^1.13.0"
 torchvision = "^0.14.0"
@@ -19,6 +18,7 @@ wordcloud = "^1.8.2.2"
 ipykernel = "^4.10.0"
 pandas = "^1.0.3"
 matplotlib = "^3.3.3"
+datasets = "^2.11.0"
 
 [build-system]
 requires = ["poetry-core"]
