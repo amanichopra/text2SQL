@@ -16,10 +16,18 @@ ENV PYTHONUNBUFFERED=1 \
 # Add `poetry` to PATH
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
+# env variables
+ENV SPIDER_BUCKET="spider-dataset"
+ENV COSQL_BUCKET="cosql-dataset"
+
+ENV MODEL_CHECKPOINT_BUCKET="mdl-checkpoints"
+ENV T5_WIKISQL_COSQL_CHECKPOINT_PATH="t5_wikisql_cosql"
+
 WORKDIR /app
 
 COPY . ./
 
+# install requirements
 RUN pip install -r requirements.txt
 
 
