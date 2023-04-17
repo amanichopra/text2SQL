@@ -1,0 +1,293 @@
+SELECT count(*), T1.maker_full_name FROM car_model AS T1 JOIN maker AS T2 ON T1.car_model_id = T2.car_model_id GROUP BY T1.maker_full_name
+SELECT T1.Name, count(*) FROM singer AS T1 JOIN concert AS T2 ON T1.Song_ID = T2.Song_ID GROUP BY T1.Name
+SELECT Template_ID FROM Document_Templates GROUP BY Template_ID HAVING count(*) > 1
+SELECT T1.fname FROM student AS T1 JOIN permanent_resident AS T2 ON T1.stuid = T2.stuid WHERE T2.cell_phone = '09700166582' OR T2.cell_phone = '
+SELECT name FROM stadium EXCEPT SELECT T1.name FROM concert AS T1 JOIN stadium AS T2 ON T1.stadium_id = T2.stadium_id WHERE T2.year = 2014
+SELECT count(*) FROM dog WHERE dog_id NOT IN ( SELECT dog_id FROM dog_treatment )
+SELECT T1.name, count(*) FROM Teachers AS T1 JOIN Courses AS T2 ON T1.course_id = T2.course_id GROUP BY T1.teacher
+SELECT DISTINCT T1.name FROM battle AS T1 JOIN commander AS T2 ON T1.command = T2.commander WHERE T2.name = 'Baloyan' AND T2.name = 'Latin'
+SELECT t1.package_option FROM channel AS t1 JOIN cartoon AS t2 ON t1.channel_id = t2.channel_id WHERE t1.director = "Ben Jones"
+SELECT min(weight) FROM car WHERE year = 1974 AND year = '74 GROUP BY min(weight) DESC LIMIT 1
+SELECT T1.manager_name, T1.shop_district FROM products AS T1 JOIN shop AS T2 ON T1.shop_id = T2.shop_id GROUP BY T1.manager_name ORDER BY count(*) DESC
+SELECT count(*), district FROM city WHERE population > (SELECT avg(city_population) FROM district)
+SELECT avg(T1.GNP), avg(T1.Population) FROM Nation AS T1 JOIN Government AS T2 ON T1.Government = T2.Government WHERE T2.Territory = "US"
+SELECT sum(T2.surface_area) FROM continent AS T1 JOIN continent AS T2 ON T1.continent_id = T2.continent_id WHERE T2.name = 'Asia' AND T2.country_id = 'Europe'
+SELECT count(*), T1.shop_name FROM employees AS T1 JOIN shop AS T2 ON T1.shop_id = T2.shop_id GROUP BY T1.shop_id ORDER BY count(*) DESC LIMIT
+SELECT T1.Name, count(*) FROM singer AS T1 JOIN concert AS T2 ON T1.Song_ID = T2.Song_ID GROUP BY T1.Name
+SELECT T1.continent_id, T1.name, count(*) FROM continents AS T1 JOIN countries AS T2 ON T1.continent_id = T2.continent_id GROUP BY T1.
+SELECT model FROM vehicle WHERE weight > 3500 AND manufacturer = 'Ford Motor Company'
+SELECT T1.language FROM country AS T1 JOIN language AS T2 ON T1.language_id = T2.language_id WHERE T2.republic_government = "Republic" GROUP BY T1.language_id
+SELECT count(*) FROM departure WHERE airport = 'AHD'
+SELECT DISTINCT T1.Name FROM artist AS T1 JOIN song AS T2 ON T1.Song_ID = T2.Song_ID WHERE T2.Sales > 300000
+SELECT airline FROM flights GROUP BY airline ORDER BY count(*) DESC LIMIT 1
+SELECT T1.course_name FROM Courses AS T1 JOIN Enrolments AS T2 ON T1.course_id = T2.course_id GROUP BY T1.course_name ORDER BY count(*) DESC LIMIT 1
+SELECT T1.name, count(*) FROM stadium AS T1 JOIN concert AS T2 ON T1.stuid = T2.stuid GROUP BY T1.name
+SELECT T1.cost FROM treatment AS T1 JOIN treatment AS T2 ON T1.treatment_id = T2.treatment_id GROUP BY T1.treatment_id ORDER BY count(*) DESC LIMIT 1
+SELECT t1.name FROM airlines AS t1 JOIN flight AS t2 ON t1.alid = t2.alid GROUP BY t2.name HAVING count(*)  200
+SELECT Nationality FROM people GROUP BY Nationality HAVING COUNT(*) >= 2
+SELECT avg(age), avg(age) FROM match WHERE match_id = 'Losers' INTERSECT SELECT avg(age) FROM match
+SELECT count(*) FROM landing_date WHERE city = "Aberdeen" OR city = "Abilene"
+SELECT T1.museum_id, T1.museum_name FROM museum AS T1 JOIN visitor_museum AS T2 ON T1.museum_id = T2.museum_id GROUP BY T1.museum_id ORDER BY count(*)
+SELECT title FROM cartoon WHERE director = "Ben Jones" OR director = "Brandon Vietti"
+SELECT document_name, template_id FROM Documents WHERE document_description LIKE '%w%'
+SELECT avg(age), avg(age) FROM match WHERE match_id = 'Losers' INTERSECT SELECT avg(age) FROM match
+SELECT T1.name, T1.treatment_date FROM dog AS T1 JOIN breed AS T2 ON T1.breed_id = T2.breed_id GROUP BY T1.breed_id ORDER BY COUNT(
+SELECT StuID FROM Student WHERE StuID NOT IN (SELECT StuID FROM Pets AS T1 JOIN Students AS T2 ON T1.StuID = T2.StuID WHERE T2.Pet =
+SELECT T1.name FROM visitor AS T1 JOIN museum AS T2 ON T1.visit_id = T2.visit_id WHERE T2.open_year  2009 INTERSECT SELECT T1.open_year FROM museum AS T3
+SELECT T1.flight_number FROM Airline AS T1 JOIN Airlines AS T2 ON T1.Airline_ID = T2.Airline_ID WHERE T2.name = "United Airlines"
+SELECT T1.first_name, T1.last_name FROM player AS T1 JOIN hand AS T2 ON T1.player_id = T2.player_id WHERE T2.hand = "Left" ORDER BY T1.birth_date
+SELECT count(*) FROM Flight WHERE City = 'Aberdeen' AND United Airlines = 'United Airlines'
+SELECT T1.name FROM teacher AS T1 JOIN course AS T2 ON T1.course_id = T2.course_id JOIN teacher AS T3 ON T1.teacher_id = T3.teacher_id WHERE T2.course_code = 
+SELECT birth_date FROM player ORDER BY earnings LIMIT 1
+SELECT avg(Earnings) FROM player WHERE Height > 200
+SELECT T1.fname, T1.age FROM student AS T1 JOIN pet AS T2 ON T1.student_id = T2.student_id WHERE T2.cat_as_pet = 'Dog' INTERSECT SEL
+SELECT city FROM country WHERE country_code NOT IN (SELECT country_code FROM official_language)
+SELECT tv_channel_id FROM country WHERE country_id > 2
+SELECT avg(T1.age) FROM dog AS T1 JOIN dog_treatment AS T2 ON T1.dog_id = T2.dog_id WHERE T2.treatment_code = 'T2.treatment'
+SELECT sum(T1.num_of_people) FROM people AS T1 JOIN nations AS T2 ON T1.nation_id = T2.nation_id WHERE T2.languages_not_used_in_english
+SELECT model FROM car WHERE engine_rate = 4 GROUP BY model_rate ORDER BY count(*) DESC LIMIT 1
+SELECT min(weight) FROM car WHERE year = 1974 AND year = '74 GROUP BY min(weight) DESC LIMIT 1
+SELECT T1.shop_name FROM employees AS T1 JOIN shop AS T2 ON T1.shop_id = T2.shop_id GROUP BY T1.shop_id ORDER BY count(*) DESC LIMIT 1
+SELECT DISTINCT T1.Name FROM artist AS T1 JOIN song AS T2 ON T1.Song_ID = T2.Song_ID WHERE T2.Sales > 300000
+SELECT T1.Name FROM contest_contest AS T1 JOIN contest_ants AS T2 ON T1.Contest_ID = T2.Contest_ID WHERE T2.Name LIKE '%Al%'
+SELECT count(*) FROM flights WHERE departure_city = 'Aberdeen' AND destination_city = 'Ashley'
+SELECT T1.name FROM breed AS T1 JOIN dog AS T2 ON T1.breed = T2.breed GROUP BY T1.breed ORDER BY count(*) DESC LIMIT 1
+SELECT T1.name FROM conductor AS T1 JOIN conductor AS T2 ON T1.conductor = T2.conductor ORDER BY T1.year_of_work DESC LIMIT 1
+SELECT T1.professional_id, T1.role_name, T1.first_name FROM Professionals AS T1 JOIN Treatments AS T2 ON T1.professional_id = T2.professional_id GROUP BY T1.professional_id
+SELECT country_code FROM country WHERE language NOT IN (SELECT country_code FROM government WHERE language NOT IN (SELECT country_code FROM government WHERE country_code NOT IN)
+SELECT count(*) FROM voters WHERE state = 'NY' OR state = 'CA'
+SELECT Nationality FROM people GROUP BY Nationality ORDER BY COUNT(*) DESC LIMIT 1
+SELECT T1.maker_name, T1.car_model_id FROM car_designer AS T1 JOIN car_maker AS T2 ON T1.car_id = T2.car_id GROUP BY T1.maker_name
+SELECT count(*) FROM car WHERE acceleration > (SELECT max(acceleration) FROM car WHERE horsepower = )
+SELECT count(*) FROM concert WHERE YEAR = 2014 OR YEAR = 2015
+SELECT T1.name FROM tourney AS T1 JOIN match AS T2 ON T1.tournament = T2.tournament GROUP BY T1.name HAVING count(*) > 10
+SELECT T1.fname, T1.midname, T1.lastname FROM university AS T1 JOIN graduate AS T2 ON T1.school = T2.school GROUP BY T1.school ORDER BY count(*) DESC LIMIT 1
+SELECT T1.name FROM airport AS T1 JOIN flight AS T2 ON T1.apid = T2.apid WHERE T2.flight_in_out_of_aircraft_id NOT IN (SELECT T1.apid FROM airport AS T3
+SELECT date_release, date_details FROM transcripts GROUP BY date_release ORDER BY count(*) DESC LIMIT 1
+SELECT T1.winner_name, T1.rank FROM match AS T1 JOIN winner AS T2 ON T1.winner_id = T2.winner_id GROUP BY T1.winner_id ORDER BY count(*)
+SELECT T1.name FROM student AS T1 JOIN high_school AS T2 ON T1.stuid = T2.stuid WHERE T2.name = 'High' AND T2.friend = 'No'
+SELECT T1.name FROM player AS T1 JOIN poker AS T2 ON T1.player_id = T2.player_id WHERE T2.employee_bet > 300000
+SELECT T1.museum_id, T1.museum_name FROM museum AS T1 JOIN staff AS T2 ON T1.museum_id = T2.museum_id GROUP BY T1.museum_id ORDER BY count(*) DESC
+SELECT T1.first_name, T1.mid_name, T1.last_name FROM Student AS T1 JOIN Student_Registration AS T2 ON T1.student_id = T2.student_id GROUP BY T1.student_
+SELECT pet_id FROM pet_owner WHERE student_last_name = 'Smith'
+SELECT major, age FROM student WHERE student_id NOT IN (SELECT student_id FROM pet_cat)
+SELECT count(*) FROM dog WHERE age  (SELECT avg(age) FROM dog)
+SELECT Name FROM nation ORDER BY Population LIMIT 3
+SELECT T1.StuID FROM Student AS T1 JOIN PersonFriend AS T2 ON T1.StuID = T2.Friend WHERE T1.Grade > 5 AND T2.Friend = 2
+SELECT T1.first_name, T1.mid_name, T1.last_name FROM enroll_in AS T1 JOIN degree AS T2 ON T1.degree_id = T2.degree_id GROUP BY T1.id ORDER BY
+SELECT model FROM cars GROUP BY model ORDER BY count(*) DESC LIMIT 1
+SELECT T1.name, count(*) FROM Teachers AS T1 JOIN Courses AS T2 ON T1.course_id = T2.course_id GROUP BY T1.teacher
+SELECT max(performance_share), min(performance_share) FROM Performance WHERE performance_type_code NOT IN (SELECT performance_type_code FROM Performance_Types WHERE performance_type_code NOT IN (SELECT final_type_code FROM Performances
+SELECT country_code FROM player GROUP BY country_code HAVING count(*) > 50
+SELECT region FROM city WHERE city_code = "Kabul" GROUP BY region_code ORDER BY count(*) DESC LIMIT 1
+SELECT year FROM matches GROUP BY year ORDER BY count(*) DESC LIMIT 1
+SELECT T1.maker_full_name, T1.maker_id, count(*) FROM car_maker AS T1 JOIN car_maker AS T2 ON T1.car_maker_id = T2.car_maker_id GROUP B
+SELECT language FROM country GROUP BY language ORDER BY count(*) DESC LIMIT 1
+SELECT T1.name, T1.membership FROM visitors AS T1 JOIN visitors AS T2 ON T1.visitor_id = T2.visitor_id WHERE T2.membership > 4 ORDER BY age DESC LIMIT 1
+SELECT country_name FROM country ORDER BY count(*) DESC LIMIT 1
+SELECT T1.fname, T1.gender FROM student AS T1 JOIN pet AS T2 ON T1.student = T2.student WHERE T2.pet_count > 1
+SELECT sum(T2.surface_area) FROM continent AS T1 JOIN continent AS T2 ON T1.continent_id = T2.continent_id WHERE T2.name = 'Asia' AND T2.country_id = 'Europe'
+SELECT template_id FROM Templates WHERE template_type_description = "Presentation"
+SELECT T1.course_enrollment_id FROM Course_Enrolment AS T1 JOIN Course_Enrolment AS T2 ON T1.course_id = T2.course_id GROUP BY T1.course_enrollment_id
+SELECT T1.property_name FROM properties AS T1 JOIN apartments AS T2 ON T1.property_id = T2.property_id WHERE T2.room_count > 1
+SELECT T1.flight_number FROM flight AS T1 JOIN departing_from AS T2 ON T1.flight_id = T2.flight_id WHERE T2.city = "Aberdeen"
+SELECT count(*) FROM manufacturer WHERE country = "France"
+SELECT T1.first_name, T1.last_name, T1.email FROM property AS T1 JOIN owner AS T2 ON T1.owner_id = T2.owner_id WHERE T2.state_name LIKE '%North%'
+SELECT T1.city FROM employees AS T1 JOIN employees AS T2 ON T1.employeeid = T2.employeeid GROUP BY T2.city HAVING count(*) > 1
+SELECT T1.last_name FROM dog AS T1 JOIN owner AS T2 ON T1.owner_id = T2.owner_id WHERE T2.age = (SELECT t2.age FROM dog)
+SELECT T1.Name FROM singer AS T1 JOIN song AS T2 ON T1.Song_ID = T2.Song_ID WHERE T2.Name NOT IN (SELECT T1.Name FROM song)
+SELECT T1.Name FROM singer AS T1 JOIN birth AS T2 ON T1.Song_ID = T2.Song_ID WHERE T2.Birth_Year = 1948 OR T2.Birth_Year = 1949
+SELECT count(*) FROM Battle WHERE ship_tonnage = '225'
+SELECT T1.country_id, T1.country_name FROM model AS T1 JOIN manufacturer AS T2 ON T1.model_id = T2.model_id GROUP BY T1.country_id HAVING count(*) > 3 OR
+SELECT money FROM player WHERE earnings = (SELECT max(revenue) FROM player WHERE poker_name = 'Poker')
+SELECT name FROM orchestra WHERE orchestra_id NOT IN (SELECT orchestra_id FROM performance)
+SELECT T1.name, T1.location FROM concert AS T1 JOIN concert AS T2 ON T1.stuid = T2.stuid WHERE T2.year = 2014 INTERSECT SELECT T1.name, T1.location FROM
+SELECT count(*) FROM flights AS T1 JOIN airports AS T2 ON T1.flight_id = T2.flight_id WHERE T2.address = 'United Airlines'
+SELECT T1.name, T1.registr_id FROM Student_Registrations AS T1 JOIN Students AS T2 ON T1.semester_id = T2.semester_id GROUP BY T1.registr_id ORDER B
+SELECT T1.form_name, T1.population FROM government AS T1 JOIN government_form AS T2 ON T1.form_id = T2.form_id WHERE T1.life_esp > 72
+SELECT tv_channel_id FROM TV_channels WHERE tv_channel_id NOT IN (SELECT tv_channel_id FROM cartoon_streams WHERE tv_channel_id NOT IN
+SELECT document_id, count(*) FROM document_paragraphs GROUP BY document_id ORDER BY document_id
+SELECT owner_id, zip_code FROM dog_owners GROUP BY owner_id ORDER BY sum(total) DESC LIMIT 1
+SELECT count(*) FROM landing_date WHERE city = "Aberdeen" OR city = "Abilene"
+SELECT count(*) FROM flight WHERE city = "Aberdeen"
+SELECT country FROM country WHERE population  (SELECT min(population) FROM country WHERE country_id NOT IN (SELECT country_id FROM country_id WHERE country_id NOT IN)
+SELECT T1.first_name FROM Professional_Names AS T1 JOIN Owners AS T2 ON T1.owner_id = T2.owner_id WHERE T2.first_name = "Professional" AND T2.first_name = "Dog"
+SELECT T1.name FROM car_maker AS T1 JOIN car_maker AS T2 ON T1.car_id = T2.maker WHERE T2.year = 1970
+SELECT tv_channel_id FROM TV_channels WHERE tv_channel_id NOT IN (SELECT tv_channel_id FROM cartoon_streams WHERE tv_channel_id NOT IN
+SELECT T1.store_name FROM products AS T1 JOIN stores AS T2 ON T1.store_id = T2.store_id WHERE T2.product_count > (SELECT avg(product_count) FROM products)
+SELECT city FROM departure GROUP BY city ORDER BY count(*) DESC LIMIT 1
+SELECT country FROM official WHERE official_language = 'English' OR official_language = 'Dutch'
+SELECT T1.country FROM country AS T1 JOIN population AS T2 ON T1.country_id = T2.country_id WHERE T2.population > (SELECT T1.population FROM country AS T3 JOIN population AS T4 ON T3.pop
+SELECT T1.country FROM country AS T1 JOIN life_espérance AS T2 ON T1.country_id = T2.country_id GROUP BY T1.country_id ORDER BY count(*) LIMIT 1
+SELECT money FROM player WHERE earnings = (SELECT max(revenue) FROM player WHERE poker_name = 'Poker')
+SELECT Template_ID FROM Document_Templates GROUP BY Template_ID HAVING COUNT(*) >= 1
+SELECT avg(T1.age) FROM dog AS T1 JOIN dog_treatment AS T2 ON T1.dog_id = T2.dog_id WHERE T2.treatment_code = 'T2.treatment'
+SELECT T1.name FROM semester AS T1 JOIN enroll AS T2 ON T1.semester_id = T2.semester_id GROUP BY T1.semester_id ORDER BY count(*) DESC LI
+SELECT avg(age) FROM student WHERE StuID NOT IN (SELECT StuID FROM pet)
+SELECT country_tv_channel FROM cartoon_streaming GROUP BY country_tv_channel ORDER BY count(*) DESC LIMIT 1
+SELECT Name FROM nation WHERE Language = 'English' INTERSECT SELECT Name FROM nation WHERE Language = 'French'
+SELECT country_code FROM player GROUP BY country_code HAVING count(*) > 50
+SELECT T1.name, T1.results, T1.commander FROM battle AS T1 JOIN ship AS T2 ON T1.ship_id = T2.ship_id WHERE T2.name = 'English Channel'
+SELECT min(product_count), max(product_count) FROM products GROUP BY store_code HAVING count(product_count) >= 1
+SELECT T1.name FROM breed AS T1 JOIN dog AS T2 ON T1.breed = T2.breed GROUP BY T1.breed ORDER BY count(*) DESC LIMIT 1
+SELECT T1.name FROM student AS T1 JOIN pet AS T2 ON T1.pet_id = T2.pet_id WHERE T2.cat_name = 'dog' INTERSECT SELECT T1.pet_name FROM pet AS T3
+SELECT T1.name, T1.membership FROM visitors AS T1 JOIN visitors AS T2 ON T1.visitor_id = T2.visitor_id WHERE T2.membership > 4 ORDER BY age DESC LIMIT 1
+SELECT T1.first_name, T1.mid_name, T1.last_name, T1.degree_id FROM Degree_Programs AS T1 JOIN Degree_Programs AS T2 ON T1.degree_id = T2.degree_i
+SELECT T1.first_name, T1.name FROM dog AS T1 JOIN owner AS T2 ON T1.owner_id = T2.owner_id GROUP BY T1.owner_id HAVING COUNT(*) >= 1
+SELECT record_company FROM records GROUP BY record_company ORDER BY count(*) DESC LIMIT 1
+SELECT count(*) FROM flights AS T1 JOIN airports AS T2 ON T1.flight_id = T2.flight_id WHERE T2.address = 'United Airlines'
+SELECT count(*) FROM car WHERE model_name = "Volvo" AND acceleration LIKE "%";
+SELECT T1.name, COUNT(*) FROM student AS T1 JOIN friend AS T2 ON T1.friend = T2.friend WHERE T2.high_school = 'St.
+SELECT semester FROM enroll WHERE sex = 'Master' INTERSECT SELECT semester FROM enroll WHERE sex = 'Bachelor'
+SELECT max(miles_per-galon) FROM model GROUP BY max(miles_per-galon) DESC LIMIT 1
+SELECT T1.name FROM employee AS T1 JOIN bonus AS T2 ON T1.employeeid = T2.employeeid GROUP BY T2.employeeid ORDER BY count(*)
+SELECT name FROM people WHERE person_id NOT IN (SELECT person_id FROM poker_player)
+SELECT country_code FROM player GROUP BY country_code ORDER BY count(*) DESC LIMIT 1
+SELECT DISTINCT DISTINCT TYPE FROM model WHERE manufacturer = 'General Motors' OR weight > 3500
+SELECT Nationality FROM people GROUP BY Nationality HAVING COUNT(*) >= 2
+SELECT count(*) FROM official_languages AS T1 JOIN government AS T2 ON T1.gov_id = T2.gov_id WHERE T2.country = "Afghanistan"
+SELECT name FROM dog WHERE treatment_cost NOT IN (SELECT T1.name FROM dog WHERE T1.treatment_cost > 1000)
+SELECT T1.visitor_name, T1.age FROM visitor AS T1 JOIN purchase AS T2 ON T1.visitor_id = T2.visitor_id GROUP BY T1.visitor_id ORDER BY count
+SELECT Region FROM country WHERE Language = "english" OR Language = "holländisch"
+SELECT T1.winner_name, T1.rank FROM match AS T1 JOIN winner AS T2 ON T1.winner_id = T2.winner_id GROUP BY T1.winner_id ORDER BY count(*)
+SELECT T1.prof_role, T1.street, T1.city, T1.state FROM Professional AS T1 JOIN Professional_Information AS T2 ON T1.prof_id = T2.prof_id GROUP BY T1.
+SELECT note_of_event FROM death WHERE death_event LIKE '%East%'
+SELECT T1.situation_death, T1.situation_injury FROM ship AS T1 JOIN injury_caused_by AS T2 ON T1.situation_id = T2.situation_id WHERE T2.tonnage = 't'
+SELECT count(*), T1.name FROM continent AS T1 JOIN car_maker AS T2 ON T1.continent_id = T2.continent_id GROUP BY T1.name
+SELECT region FROM city WHERE city_code = "Kabul" GROUP BY region_code ORDER BY count(*) DESC LIMIT 1
+SELECT document_name FROM Templates WHERE template_type_code = "BK"
+SELECT country_code FROM country WHERE language NOT IN (SELECT country_code FROM government WHERE language NOT IN (SELECT country_code FROM government WHERE country_code NOT IN)
+SELECT T1.professional_id, T1.last_name, T1.cell_phone FROM Professionals AS T1 JOIN Treatments AS T2 ON T1.professional_id = T2.professional_id GROUP BY T1.professional_id H
+SELECT template_type_code FROM Templates GROUP BY template_type_code ORDER BY count(*) DESC LIMIT 1
+SELECT Country FROM singer WHERE Age > 40 INTERSECT SELECT Country FROM singer WHERE Age  30
+SELECT T1.accelerator FROM car AS T1 JOIN car_make AS T2 ON T1.car_id = T2.car_id WHERE T2.make = "amc hornet sportabout" AND T2.accelerator = "
+SELECT Template_ID FROM Document_Templates GROUP BY Template_ID HAVING COUNT(*) >= 1
+SELECT T1.name, T1.theme, count(*) FROM concert AS T1 JOIN singer AS T2 ON T1.cName = T2.cName JOIN concert AS T3 ON T1.cName = T3.cName JOIN concert AS T
+SELECT count(*) FROM country WHERE language = 'english' INTERSECT SELECT count(*) FROM country WHERE language = 'holländisch'
+SELECT T1.name FROM song AS T1 JOIN singer AS T2 ON T1.song_id = T2.song_id WHERE T2.age > (SELECT avg(age) FROM singer)
+SELECT T1.Name FROM conductor AS T1 JOIN orchestra AS T2 ON T1.Orchestre_ID = T2.Orchestre_ID GROUP BY T1.Name HAVING COUNT(*) > 1
+SELECT T1.student_id, T1.first_name, T1.mid_name, T1.last_name, count(*) FROM Student_Enrolment AS T1 JOIN Student_Enrolment AS T2 ON T1.student_
+SELECT DISTINCT T1.type_description FROM Templates AS T1 JOIN Document_Types AS T2 ON T1.type_code = T2.type_code WHERE T2.document_type_code = "Templates" GROUP BY T
+SELECT population, name, leader FROM country ORDER BY area DESC LIMIT 1
+SELECT T1.name FROM player AS T1 JOIN poker AS T2 ON T1.player_id = T2.player_id WHERE T2.employee_bet > 300000
+SELECT T1.lname FROM student AS T1 JOIN degree AS T2 ON T1.student_id = T2.student_id WHERE T2.state = "North Carolina" AND T2.state = "North Carolina"
+SELECT T1.area_code FROM voters AS T1 JOIN contestants AS T2 ON T1.contest_id = T2.contest_id WHERE T2.contest_name = 'Tabatha Gehling' INTERSECT SELECT
+SELECT district FROM store WHERE product_count  3000 INTERSECT SELECT district FROM store WHERE product_count > 10000
+SELECT T1.dept_name, T1.dept_id FROM Degrees AS T1 JOIN Department_Departments AS T2 ON T1.dept_id = T2.dept_id GROUP BY T1.dept_name
+SELECT Professional_ID, Professional_Rolle, Professional_Email FROM Professionals WHERE Professional_ID NOT IN (SELECT Professional_ID FROM Professionals WHERE Professional_Role NOT IN (SELECT Professional_Role FROM Professionals)
+SELECT count(*) FROM car_models AS T1 JOIN manufacturer AS T2 ON T1.car_id = T2.maker WHERE T2.name = "American Motor Company"
+SELECT T1.name, T1.course_code FROM Teachers AS T1 JOIN Courses AS T2 ON T1.course_code = T2.course_code JOIN Teachers AS T3 ON T1.teacher_code = T3.teacher_code ORDER BY T3.
+SELECT sum(population), avg(area) FROM country WHERE continent = "North America" AND area > 3000 GROUP BY country ORDER BY area DESC LIMIT 1
+SELECT count(DISTINCT T1.series_name), count(DISTINCT T1.series_content) FROM TV_channels AS T1 JOIN series AS T2 ON T1.series_id = T2.series_id GROUP
+SELECT Language, count(*) FROM TV Channels GROUP BY Language ORDER BY count(*) DESC LIMIT 1
+SELECT T1.first_name FROM Professional_Names AS T1 JOIN Owners AS T2 ON T1.owner_id = T2.owner_id WHERE T2.first_name = "Professional" AND T2.first_name = "Dog"
+SELECT lname FROM student WHERE st_cat = 3 GROUP BY lname ORDER BY count(*) DESC LIMIT 1
+SELECT record_format FROM orchestra GROUP BY record_format ORDER BY count(*) DESC LIMIT 1
+SELECT name FROM museum WHERE museum_id NOT IN (SELECT museum_id FROM visitor)
+SELECT T1.visit_id, T1.name, T1.age FROM visitor AS T1 JOIN museum AS T2 ON T1.visit_id = T2.visit_id GROUP BY T1.visit_id HAVING
+SELECT T1.form_name, T1.population FROM government AS T1 JOIN government_form AS T2 ON T1.form_id = T2.form_id WHERE T1.life_esp > 72
+SELECT T1.name FROM visitors AS T1 JOIN membership AS T2 ON T1.visit_id = T2.visit_id WHERE T2.membership_level > 4 ORDER BY T1.level
+SELECT abbreviation, country FROM airline ORDER BY count(*) LIMIT 1
+SELECT T1.bname, T1.id FROM Battle AS T1 JOIN People AS T2 ON T1.bname = T2.bname WHERE T2.id = 'T1.fight' GROUP BY T1.id HAVING sum(
+SELECT avg(age), max(age), TYPE FROM pet GROUP BY TYPE
+SELECT T1.country_id, T1.country_name FROM model AS T1 JOIN manufacturer AS T2 ON T1.model_id = T2.model_id GROUP BY T1.country_id HAVING count(*) > 3 OR
+SELECT T1.professional_id, T1.cell_phone FROM Professionals AS T1 JOIN Treatments AS T2 ON T1.professional_id = T2.professional_id GROUP BY T1.professional_id HAVING count(*) >
+SELECT document_id FROM Documents WHERE document_id LIKE "1" OR document_id = "2"
+SELECT hometown FROM teacher ORDER BY age LIMIT 1
+SELECT count(*) FROM dog WHERE gender = 'F' GROUP BY dog_pet_pet_code ORDER BY count(*) DESC LIMIT 1
+SELECT T1.make_id, T1.make_name FROM car AS T1 JOIN engine AS T2 ON T1.engine_id = T2.engine_id GROUP BY T1.engine_id ORDER BY count(*) DESC
+SELECT T1.release_date FROM transcript AS T1 JOIN transcript_release AS T2 ON T1.release_date = T2.release_date WHERE T2.release_date = (SELECT T1.release_date FROM transcripts)
+SELECT T1.date_of_course_results, T1.transcript_id FROM Course_Results AS T1 JOIN Course_Results AS T2 ON T1.course_id = T2.course_id
+SELECT T1.High_School_ID FROM High_School AS T1 JOIN PersonFriend AS T2 ON T1.High_School_ID = T2.High_School_ID WHERE T2.Friend = '
+SELECT T1.email_address FROM professionals AS T1 JOIN professionals AS T2 ON T1.prof_address_id = T2.prof_address_id WHERE T2.state = "Hawaii" OR T2.
+SELECT T1.name FROM semester AS T1 JOIN enroll AS T2 ON T1.semester_id = T2.semester_id GROUP BY T1.semester_id ORDER BY count(*) DESC LI
+SELECT avg(life_espérance) FROM country WHERE ENGLISH NOT THE Official Language
+SELECT t1.aeroport_code FROM airport AS t1 JOIN flight AS t2 ON t1.aeroport_code = t2.aeroport_code WHERE t1.aeroport_code = 'CVO
+SELECT T1.name FROM TV_Series AS T1 JOIN TV_Series AS T2 ON T1.series_id = T2.series_id WHERE T2.episode = "A Love of a Lifetime"
+SELECT T1.first_name, T1.country_code FROM player AS T1 JOIN player AS T2 ON T1.player_id = T2.player_id GROUP BY T1.player_id ORDER BY age DESC LIMIT 1
+SELECT T1.name FROM teacher AS T1 JOIN course AS T2 ON T1.course_id = T2.course_id GROUP BY T1.teacher_id HAVING count(*) >= 2
+SELECT avg(ticket_buying_count), max(ticket_buying_count) FROM Visits
+SELECT DISTINCT T1.bname, T1.bname FROM ship AS T1 JOIN battle AS T2 ON T1.ship_id = T2.ship_id WHERE T2.ship_type_code = 'Brig'
+SELECT T1.name, T1.release_year FROM song AS T1 JOIN artist AS T2 ON T1.artist_id = T2.artist_id WHERE T2.age = (SELECT youngest_age FROM song)
+SELECT T1.country FROM country AS T1 JOIN continent AS T2 ON T1.continent_id = T2.continent_id WHERE T2.population = 80000
+SELECT T1.Name FROM singer AS T1 JOIN song AS T2 ON T1.Song_ID = T2.Song_ID GROUP BY T1.Name HAVING COUNT(*) > 1
+SELECT dept_description FROM department WHERE dept_name LIKE '%computer%'
+SELECT horsepower FROM car ORDER BY acceleration DESC LIMIT 1
+SELECT avg(age), min(age), max(age) FROM singer WHERE country = 'France'
+SELECT DISTINCT DISTINCT TYPE FROM model WHERE manufacturer = 'General Motors' OR weight > 3500
+SELECT count(*) FROM friends AS T1 JOIN student AS T2 ON T1.student_id = T2.student_id WHERE T2.high_school = 'Kyle'
+SELECT country FROM manufacturer WHERE manufacturer = "car"
+SELECT StuID FROM Student WHERE StuID NOT IN (SELECT StuID FROM Student WHERE StuID NOT IN (SELECT StuID FROM Friends)
+SELECT T1.city FROM employees AS T1 JOIN employees AS T2 ON T1.employeeid = T2.employeeid GROUP BY T2.city HAVING count(*) > 1
+SELECT count(*) FROM pet WHERE age > 20 GROUP BY pet_id HAVING count(*) >= 20
+SELECT T1.winner_name, T1.rank_points FROM WHERE T1.winner_id = (SELECT T1.winner_id FROM WHERE T1.winner_count = (SELECT max(winner_count) FROM WHER
+SELECT T1.name FROM high_school AS T1 JOIN person AS T2 ON T1.id = T2.high_school_id GROUP BY T1.id ORDER BY count(*) DESC LIMIT 1
+SELECT T1.feature_type_name FROM Features AS T1 JOIN Features_Types AS T2 ON T1.feature_id = T2.feature_id WHERE T2.feature_type_code = "AirCon"
+SELECT T1.date FROM transcript AS T1 JOIN results AS T2 ON T1.result_id = T2.result_id GROUP BY T1.result_id ORDER BY count(*) LIMIT 1
+SELECT T1.name FROM airlines AS T1 JOIN flight AS T2 ON T1.apid = T2.apid WHERE T2.apid = 'AHD'
+SELECT count(*) FROM car WHERE country = "usa"
+SELECT T1.StuID FROM Student AS T1 JOIN Likes AS T2 ON T1.StuID = T2.StuID WHERE T2.likes = 2
+SELECT T1.name FROM airlines AS T1 JOIN flight AS T2 ON T1.alid = T2.alid WHERE T2.alid = 'AHD'
+SELECT count(*) FROM high_school AS T1 JOIN high_school AS T2 ON T1.high_school_id = T2.high_school_id WHERE T2.grade = 9 OR T2.grade = 10
+SELECT T1.player_name FROM player AS T1 JOIN poker_game AS T2 ON T1.player_id = T2.player_id JOIN final_table AS T3 ON T1.final_table_id = T3.final_table_id
+SELECT T1.release_date FROM transcript AS T1 JOIN transcript_release AS T2 ON T1.release_date = T2.release_date WHERE T2.release_date = (SELECT T1.release_date FROM transcripts)
+SELECT production_code, channel FROM cartoon GROUP BY production_code ORDER BY count(*) DESC LIMIT 1
+SELECT Template_Type_Code FROM Templates GROUP BY Template_Type_Code HAVING COUNT(*) >= 1
+SELECT T1.name FROM airlines AS T1 JOIN flight AS T2 ON T1.alid = T2.alid WHERE T2.alid = 'AHD'
+SELECT name, capacity FROM stadium ORDER BY attendance AVG(*) DESC LIMIT 1
+SELECT country FROM Africa GROUP BY country HAVING population  1 JOIN country AS T1 JOIN country AS T2 ON T1.country = T2.country WHERE T1.African_country = 'Africa' AND T2.As T
+SELECT count(*) FROM dog WHERE dog_id NOT IN ( SELECT dog_id FROM dog_treatment )
+SELECT T1.name FROM Employee AS T1 JOIN Award AS T2 ON T1.employeeid = T2.employeeid WHERE T2.award = 'null' GROUP BY T1.em
+SELECT T1.enrolled_in, T1.synonym FROM enroll AS T1 JOIN student AS T2 ON T1.enrolled_in = T2.enrolled_in GROUP BY T1.enrolled_in ORDER BY count(*) DESC LIMIT 1
+SELECT count(*) FROM professionals WHERE professional_id NOT IN ( SELECT professional_id FROM treatments WHERE professional_id NOT IN ( SELECT professional_id FROM dogs )
+SELECT T1.continent_id, T1.name, count(*) FROM continents AS T1 JOIN countries AS T2 ON T1.continent_id = T2.continent_id GROUP BY T1.
+SELECT document_id, document_name, count(*) FROM Documents GROUP BY document_id HAVING count(*) >= 1
+SELECT country_tv_channel FROM cartoon_streaming GROUP BY country_tv_channel ORDER BY count(*) DESC LIMIT 1
+SELECT sum(ticket_expenses) FROM visitors WHERE membership_level = 1
+SELECT T1.first_name, T1.last_name FROM player AS T1 JOIN hand AS T2 ON T1.player_id = T2.player_id WHERE T2.hand = "Left" ORDER BY T1.birth_date
+SELECT T1.paragraph_id, T1.text FROM Documents AS T1 JOIN Documents AS T2 ON T1.document_id = T2.document_id WHERE T2.document_name = 'Welcome to NY'
+SELECT sum(T1.Points), T2.first_name FROM player AS T1 JOIN player AS T2 ON T1.player_id = T2.player_id GROUP BY T1.player_id
+SELECT country FROM country WHERE population > (SELECT max(population) FROM country WHERE country_id NOT IN (SELECT country_id FROM country_id WHERE country_id NOT IN)
+SELECT DISTINCT T1.city FROM city AS T1 JOIN country AS T2 ON T1.country_id = T2.country_id WHERE T2.language_of_domestic_language = 'Chinese'
+SELECT T1.name FROM visitors AS T1 JOIN membership AS T2 ON T1.visit_id = T2.visit_id WHERE T2.membership_level > 4 ORDER BY T1.level
+SELECT avg(Ranking), t1.first_name FROM player AS t1 JOIN player AS t2 ON t1.player_id = t2.player_id GROUP BY t1.player_id
+SELECT avg(T1.grade) FROM Student AS T1 JOIN Friends AS T2 ON T1.student_id = T2.student_id WHERE T2.friend = "some"
+SELECT count(*) FROM fans AS T1 JOIN fans AS T2 ON T1.like_id = T2.like_id WHERE T2.name = "Kyle"
+SELECT name FROM stadium WHERE stadium_id NOT IN (SELECT stadium_id FROM concert)
+SELECT citizenship FROM singer GROUP BY citizenship ORDER BY COUNT(*) DESC LIMIT 1
+SELECT money FROM player WHERE height = (SELECT max(length) FROM player WHERE height = (SELECT max(length) FROM player)
+SELECT t1.type FROM enroll AS t1 JOIN program AS t2 ON t1.id = t2.program_id GROUP BY t2.id ORDER BY count(*) DESC LIMIT 1
+SELECT T1.student_id, T1.first_name, T1.mid_name, T1.last_name, count(*) FROM Student_Enrolment AS T1 JOIN Student_Enrolment AS T2 ON T1.student_
+SELECT weight FROM dog GROUP BY weight ORDER BY age DESC LIMIT 1
+SELECT T1.lname FROM student AS T1 JOIN degree AS T2 ON T1.student_id = T2.student_id WHERE T2.state = "North Carolina" AND T2.state = "North Carolina"
+SELECT T1.name, T1.winner FROM player AS T1 JOIN match AS T2 ON T1.player_id = T2.player_id GROUP BY T1.player_id ORDER BY count(*) DESC LIMIT 1
+SELECT DISTINCT T1.car_model FROM car AS T1 JOIN production AS T2 ON T1.car_id = T2.car_id WHERE T2.year > 1980
+SELECT grade FROM high_school GROUP BY grade ORDER BY count(*) DESC LIMIT 1
+SELECT T1.first_name, T1.name FROM dog AS T1 JOIN owner AS T2 ON T1.owner_id = T2.owner_id GROUP BY T1.owner_id HAVING COUNT(*) >= 1
+SELECT T1.course_name FROM Courses AS T1 JOIN Enrolments AS T2 ON T1.course_id = T2.course_id GROUP BY T1.course_name ORDER BY count(*) DESC LIMIT 1
+SELECT city FROM country WHERE country_code NOT IN (SELECT country_code FROM official_language)
+SELECT T1.friend FROM people AS T1 JOIN people AS T2 ON T1.people_id = T2.people_id WHERE T2.high_school = 'Kyle'
+SELECT country FROM manufacturer GROUP BY country HAVING count(*) >= 3
+SELECT count(*) FROM visitors WHERE museum_opening_year > 2010 GROUP BY museum_opening_year ORDER BY count(*) DESC LIMIT 1
+SELECT count(*) FROM dog WHERE owner_id NOT IN ( SELECT owner_id FROM dog WHERE owner_id NOT IN ( SELECT owner_id FROM dog WHERE owner_id NOT IN ( SELECT owner_i
+SELECT production_code, channel FROM cartoon GROUP BY production_code ORDER BY count(*) DESC LIMIT 1
+SELECT citizenship FROM singer WHERE birth_year  1945 INTERSECT SELECT citizenship FROM singer WHERE birth_year  1955
+SELECT count(DISTINCT continent) FROM continent WHERE language = 'Chinese'
+SELECT avg(life_easiness), sum(population) FROM continent WHERE avg(life_easiness)  72
+SELECT T1.first_name, T1.last_name, T1.email FROM property AS T1 JOIN owner AS T2 ON T1.owner_id = T2.owner_id WHERE T2.state_name LIKE '%North%'
+SELECT document_id FROM Documents GROUP BY document_id ORDER BY count(*) LIMIT 1
+SELECT owner_id, last_name FROM owners WHERE owner_paid = (SELECT max(owner_paid) FROM treatments WHERE dog_id)
+SELECT count(*) FROM matches WHERE YEAR = 2013 OR YEAR = 2016
+SELECT country_tv_channel FROM TV_channel WHERE country_id NOT IN (SELECT country_id FROM cartoon_channel WHERE author = "Todd Casey")
+SELECT T1.name, T1.release_year FROM song AS T1 JOIN artist AS T2 ON T1.artist_id = T2.artist_id WHERE T2.age = (SELECT youngest_age FROM song)
+SELECT fname FROM student WHERE st_cat_or_st_dog_pet = 'Yes' OR st_cat_or_dog_pet = 'No'
+SELECT state FROM home_office_locations WHERE state_id = 'owner' INTERSECT SELECT state_id FROM profession
+SELECT T1.first_name, T1.description FROM Professional AS T1 JOIN Treatment AS T2 ON T1.professional_id = T2.professional_id GROUP BY T1.professional_id ORDER BY count(*) DESC LIMIT
+SELECT T1.name FROM teacher AS T1 JOIN course AS T2 ON T1.course_id = T2.course_id JOIN teacher AS T3 ON T1.teacher_id = T3.teacher_id WHERE T2.course_code = 
+SELECT count(*), T1.name FROM continent AS T1 JOIN car_maker AS T2 ON T1.continent_id = T2.continent_id GROUP BY T1.name
+SELECT T1.first_name, T1.description FROM Professional AS T1 JOIN Treatment AS T2 ON T1.professional_id = T2.professional_id GROUP BY T1.professional_id ORDER BY count(*) DESC LIMIT
+SELECT T1.name, T1.results, T1.commander FROM battle AS T1 JOIN ship AS T2 ON T1.ship_id = T2.ship_id WHERE T2.name = 'English Channel'
+SELECT T1.High_School_ID FROM High_School AS T1 JOIN PersonFriend AS T2 ON T1.High_School_ID = T2.High_School_ID WHERE T2.Friend = '
+SELECT count(*) FROM Documents WHERE document_type_code = 'PPT' GROUP BY document_type_code
+SELECT model FROM car WHERE engine_rate = 4 GROUP BY model_rate ORDER BY count(*) DESC LIMIT 1
+SELECT sum(Unique_Language) FROM official_languages WHERE founded > 1930
