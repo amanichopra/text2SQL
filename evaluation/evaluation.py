@@ -25,6 +25,7 @@ import json
 import sqlite3
 import traceback
 import argparse
+from google.cloud import storage
 
 from process_sql import tokenize, get_schema, get_tables_with_alias, Schema, get_sql
 
@@ -475,12 +476,22 @@ def print_scores(scores, etype):
             print("{:20} {:<20.3f} {:<20.3f} {:<20.3f} {:<20.3f} {:<20.3f}".format(type_, *this_scores))
 
 
-def evaluate(gold, predict, db_dir, etype, kmaps):
-    with open(gold) as f:
-        glist = [l.strip().split('\t') for l in f.readlines() if len(l.strip()) > 0]
+def evaluate(gold, predict, db_dir, etype, kmaps, bucket=None, gold_uri=False, predict_uri=False):
+    if gold_uri:
+        glist = bucket.get_blob(gold).download_as_text().split('\n')
+    else:
+        with open(gold) as f:
+            glist = f.readlines()
 
-    with open(predict) as f:
-        plist = [l.strip().split('\t') for l in f.readlines() if len(l.strip()) > 0]
+    glist = [l.strip().split('\t') for l in glist if len(l.strip()) > 0]
+
+    if predict_uri:
+        plist = bucket.get_blob(predict).download_as_text().split('\n')
+    else:
+        with open(predict) as f:
+            plist = f.readlines()
+
+    plist = [l.strip().split('\t') for l in plist if len(l.strip()) > 0]
     # plist = [("select max(Share),min(Share) from performance where Type != 'terminal'", "orchestra")]
     # glist = [("SELECT max(SHARE) ,  min(SHARE) FROM performance WHERE TYPE != 'Live final'", "orchestra")]
     evaluator = Evaluator()
@@ -502,7 +513,7 @@ def evaluate(gold, predict, db_dir, etype, kmaps):
         p_str = p[0]
         g_str, db = g
         db_name = db
-        db = os.path.join(db_dir, db, db + ".sqlite")
+        db = os.path.join(db_dir, db_name + ".sqlite")
         schema = Schema(get_schema(db))
         g_sql = get_sql(schema, g_str)
         hardness = evaluator.eval_hardness(g_sql)
@@ -837,9 +848,12 @@ def build_foreign_key_map(entry):
     return foreign_key_map
 
 
-def build_foreign_key_map_from_json(table):
-    with open(table) as f:
-        data = json.load(f)
+def build_foreign_key_map_from_json(table, table_uri=False, bucket=None):
+    if table_uri:
+        data = json.loads(bucket.get_blob(table).download_as_text())
+    else:
+        with open(table) as f:
+            data = json.load(f)
     tables = {}
     for entry in data:
         tables[entry['db_id']] = build_foreign_key_map(entry)
@@ -849,20 +863,31 @@ def build_foreign_key_map_from_json(table):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--gold', dest='gold', type=str)
+    parser.add_argument('--gold_uri', dest='gold_uri', type=bool, default=False)
     parser.add_argument('--pred', dest='pred', type=str)
+    parser.add_argument('--pred_uri', dest='pred_uri', type=bool, default=False)
     parser.add_argument('--db', dest='db', type=str)
     parser.add_argument('--table', dest='table', type=str)
+    parser.add_argument('--table_uri', dest='table_uri', type=bool, default=False)
     parser.add_argument('--etype', dest='etype', type=str)
+    parser.add_argument('--bucket', dest='bucket', type=str, default=None)
     args = parser.parse_args()
 
     gold = args.gold
+    gold_uri = args.gold_uri
     pred = args.pred
+    pred_uri = args.pred_uri
     db_dir = args.db
     table = args.table
+    table_uri = args.table_uri
     etype = args.etype
+    if args.bucket:
+        bucket = args.bucket
+        client = storage.Client()
+        bucket = client.bucket(bucket)
 
     assert etype in ["all", "exec", "match"], "Unknown evaluation method"
 
-    kmaps = build_foreign_key_map_from_json(table)
+    kmaps = build_foreign_key_map_from_json(table, table_uri=table_uri, bucket=bucket)
 
-    evaluate(gold, pred, db_dir, etype, kmaps)
+    evaluate(gold, pred, db_dir, etype, kmaps, gold_uri=gold_uri, predict_uri=pred_uri, bucket=bucket)
