@@ -1,4 +1,4 @@
-FROM us-docker.pkg.dev/deeplearning-platform-release/gcr.io/pytorch-gpu.1-13.py310:latest
+FROM gcr.io/deeplearning-platform-release/pytorch-gpu.1-13.py310:latest
 
 # Configure Poetry
 ENV PYTHONUNBUFFERED=1 \
@@ -13,9 +13,6 @@ ENV PYTHONUNBUFFERED=1 \
     PYSETUP_PATH="/opt/pysetup" \
     VENV_PATH="/opt/pysetup/.venv" 
 
-# Add `poetry` to PATH
-ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
-
 # env variables
 ENV SPIDER_BUCKET="spider-dataset"
 ENV COSQL_BUCKET="cosql-dataset"
@@ -29,5 +26,3 @@ COPY . ./
 
 # install requirements
 RUN pip install -r requirements.txt
-
-
