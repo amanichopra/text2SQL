@@ -76,7 +76,7 @@ class Schema:
         return idMap
 
 
-def get_schema(db):
+def get_schema(db, is_uri=False):
     """
     Get database's schema, which is a dict with table name as key
     and list of column names as value
@@ -85,7 +85,7 @@ def get_schema(db):
     """
 
     schema = {}
-    conn = sqlite3.connect(db)
+    conn = sqlite3.connect(db, uri=is_uri)
     cursor = conn.cursor()
 
     # fetch table names
@@ -486,10 +486,6 @@ def parse_limit(toks, start_idx):
 
     if idx < len_ and toks[idx] == 'limit':
         idx += 2
-        # make limit value can work, cannot assume put 1 as a fake limit number
-        if type(toks[idx-1]) != int:
-            return idx, 1
-
         return idx, int(toks[idx-1])
 
     return idx, None
