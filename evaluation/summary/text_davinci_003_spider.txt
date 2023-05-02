@@ -1,0 +1,2911 @@
+0
+0
+easy pred: SELECT COUNT(*) FROM head INNER JOIN management ON head.head_id = management.head_id INNER JOIN department ON department.department_id = management.department_id WHERE head.age > 56;
+easy gold: SELECT count(*) FROM head WHERE age  >  56
+
+0
+0
+medium pred: SELECT h.name, h.born_state, h.age FROM head h JOIN management m ON h.head_id = m.head_id ORDER BY h.age;
+medium gold: SELECT name ,  born_state ,  age FROM head ORDER BY age
+
+1
+1
+1
+0
+0
+easy pred: SELECT h.name FROM head h JOIN management m     ON h.head_id = m.head_id WHERE h.born_state != 'California'
+easy gold: SELECT name FROM head WHERE born_state != 'California'
+
+1
+1
+1
+hard pred: SELECT     YEAR(creation) AS 'Establishment_Year'  FROM     department  GROUP BY     Establishment_Year  ORDER BY     COUNT(*) DESC  LIMIT 1;
+hard gold: SELECT creation FROM department GROUP BY creation ORDER BY count(*) DESC LIMIT 1
+
+1
+medium pred: SELECT d.name, d.num_employees  FROM department d, head h, management m  WHERE m.temporary_acting = 'Yes'  AND m.head_id = h.head_id  AND m.department_id = d.department_id;
+medium gold: SELECT T1.name ,  T1.num_employees FROM department AS T1 JOIN management AS T2 ON T1.department_id  =  T2.department_id WHERE T2.temporary_acting  =  'Yes'
+
+1
+1
+extra pred: SELECT COUNT(*) FROM department d LEFT OUTER JOIN management m ON d.department_id = m.department_id LEFT OUTER JOIN head h ON m.head_id = h.head_id WHERE h.head_id IS NULL;
+extra gold: SELECT count(*) FROM department WHERE department_id NOT IN (SELECT department_id FROM management);
+
+0
+1
+medium pred: SELECT DISTINCT h.age FROM head h INNER JOIN management m ON h.head_id = m.head_id WHERE m.temporary_acting = 1;
+medium gold: SELECT DISTINCT T1.age FROM management AS T2 JOIN head AS T1 ON T1.head_id  =  T2.head_id WHERE T2.temporary_acting  =  'Yes'
+
+0
+1
+extra pred: SELECT DISTINCT born_state FROM head WHERE head_id IN (     SELECT head_id     FROM management m1     INNER JOIN department d1 ON m1.department_id = d1.department_id     WHERE d1.name = 'Treasury' ) AND head_id IN (     SELECT head_id     FROM management m2     INNER JOIN department d2 ON m2.department_id = d2.department_id     WHERE d2.name = 'Homeland Security' );
+extra gold: SELECT T3.born_state FROM department AS T1 JOIN management AS T2 ON T1.department_id  =  T2.department_id JOIN head AS T3 ON T2.head_id  =  T3.head_id WHERE T1.name  =  'Treasury' INTERSECT SELECT T3.born_state FROM department AS T1 JOIN management AS T2 ON T1.department_id  =  T2.department_id JOIN head AS T3 ON T2.head_id  =  T3.head_id WHERE T1.name  =  'Homeland Security'
+
+1
+medium pred: SELECT d.department_id, d.name, COUNT(m.head_id) AS num_heads FROM department d JOIN management m     ON d.department_id = m.department_id GROUP BY d.department_id HAVING COUNT(m.head_id) > 1;
+medium gold: SELECT T1.department_id ,  T1.name ,  count(*) FROM management AS T2 JOIN department AS T1 ON T1.department_id  =  T2.department_id GROUP BY T1.department_id HAVING count(*)  >  1
+
+1
+1
+easy pred: SELECT COUNT(farm_id) FROM farm;
+easy gold: SELECT count(*) FROM farm
+
+1
+easy pred: SELECT COUNT(farm_id) FROM farm;
+easy gold: SELECT count(*) FROM farm
+
+1
+0
+easy pred: SELECT farm.farm_id, SUM(farm.total_horses) AS 'Total Horses Record'  FROM farm  GROUP BY farm.farm_id  ORDER BY 'Total Horses Record' ASC;
+easy gold: SELECT Total_Horses FROM farm ORDER BY Total_Horses ASC
+
+1
+1
+0
+0
+easy pred: SELECT theme, year FROM farm_competition ORDER BY year ASC;
+easy gold: SELECT Theme FROM farm_competition ORDER BY YEAR ASC
+
+1
+1
+0
+0
+easy pred: SELECT avg(working_horses)  FROM farm  JOIN competition_record  ON farm.farm_id = competition_record.farm_id WHERE total_horses > 5000;
+easy gold: SELECT avg(Working_Horses) FROM farm WHERE Total_Horses  >  5000
+
+1
+medium pred: SELECT MAX(f.cows) AS max_cows,         MIN(f.cows) AS min_cows FROM farm AS f;
+medium gold: SELECT max(Cows) ,  min(Cows) FROM farm
+
+1
+medium pred: SELECT MAX(f.cows) as max_cows, MIN(f.cows) as min_cows FROM farm f;
+medium gold: SELECT max(Cows) ,  min(Cows) FROM farm
+
+0
+0
+easy pred: SELECT DISTINCT status  FROM city;
+easy gold: SELECT count(DISTINCT Status) FROM city
+
+1
+1
+1
+1
+1
+medium pred: SELECT c.official_name, c.status FROM city c WHERE c.population = (SELECT MAX(population) FROM city)
+medium gold: SELECT Official_Name ,  Status FROM city ORDER BY Population DESC LIMIT 1
+
+1
+medium pred: SELECT c.year, ct.official_name FROM competition_record c  INNER JOIN farm_competition fc  ON c.competition_id = fc.competition_id  INNER JOIN city ct  ON fc.host_city_id = ct.city_id;
+medium gold: SELECT T2.Year ,  T1.Official_Name FROM city AS T1 JOIN farm_competition AS T2 ON T1.City_ID  =  T2.Host_city_ID
+
+1
+medium pred: SELECT c.year, ci.official_name FROM farm_competition c INNER JOIN city ci ON ci.city_id = c.host_city_id;
+medium gold: SELECT T2.Year ,  T1.Official_Name FROM city AS T1 JOIN farm_competition AS T2 ON T1.City_ID  =  T2.Host_city_ID
+
+1
+medium pred: SELECT c.official_name FROM city c JOIN farm_competition fc ON c.city_id = fc.host_city_id GROUP BY c.official_name HAVING COUNT(DISTINCT fc.competition_id) > 1;
+medium gold: SELECT T1.Official_Name FROM city AS T1 JOIN farm_competition AS T2 ON T1.City_ID  =  T2.Host_city_ID GROUP BY T2.Host_city_ID HAVING COUNT(*)  >  1
+
+1
+medium pred: SELECT c.official_name FROM city c JOIN farm_competition fc ON c.city_id = fc.host_city_id WHERE c.status IS NOT NULL GROUP BY c.official_name HAVING COUNT(*) > 1;
+medium gold: SELECT T1.Official_Name FROM city AS T1 JOIN farm_competition AS T2 ON T1.City_ID  =  T2.Host_city_ID GROUP BY T2.Host_city_ID HAVING COUNT(*)  >  1
+
+0
+0
+extra pred: SELECT status  FROM city  JOIN farm_competition ON city.city_id = farm_competition.host_city_id  WHERE farm_competition.year IN (SELECT MAX(competition_record.rank)                                 FROM competition_record)
+extra gold: SELECT T1.Status FROM city AS T1 JOIN farm_competition AS T2 ON T1.City_ID  =  T2.Host_city_ID GROUP BY T2.Host_city_ID ORDER BY COUNT(*) DESC LIMIT 1
+
+1
+extra pred: SELECT city.status FROM city INNER JOIN farm_competition ON city.city_id = farm_competition.host_city_id GROUP BY host_city_id ORDER BY COUNT(*) DESC LIMIT 1;
+extra gold: SELECT T1.Status FROM city AS T1 JOIN farm_competition AS T2 ON T1.City_ID  =  T2.Host_city_ID GROUP BY T2.Host_city_ID ORDER BY COUNT(*) DESC LIMIT 1
+
+0
+0
+medium pred: SELECT  fc.theme FROM competition_record cr INNER JOIN farm_competition fc     ON cr.competition_id = fc.competition_id INNER JOIN city c     ON c.city_id = fc.host_city_id WHERE c.population > 1000;
+medium gold: SELECT T2.Theme FROM city AS T1 JOIN farm_competition AS T2 ON T1.City_ID  =  T2.Host_city_ID WHERE T1.Population  >  1000
+
+1
+1
+1
+medium pred: SELECT c.status, AVG(c.population) FROM city c GROUP BY c.status;
+medium gold: SELECT Status ,  avg(Population) FROM city GROUP BY Status
+
+0
+0
+medium pred: SELECT status, COUNT(city_id) FROM city GROUP BY status ORDER BY COUNT(city_id) DESC;
+medium gold: SELECT Status FROM city GROUP BY Status ORDER BY COUNT(*) ASC
+
+0
+0
+medium pred: SELECT status, COUNT(status)  FROM city GROUP BY status ORDER BY COUNT(status) ASC;
+medium gold: SELECT Status FROM city GROUP BY Status ORDER BY COUNT(*) ASC
+
+0
+0
+hard pred: SELECT status, COUNT(*) AS total FROM city GROUP BY status ORDER BY total DESC LIMIT 1;
+hard gold: SELECT Status FROM city GROUP BY Status ORDER BY COUNT(*) DESC LIMIT 1
+
+0
+0
+hard pred: SELECT status, COUNT(*)  FROM city GROUP BY status ORDER BY COUNT(*) DESC LIMIT 1;
+hard gold: SELECT Status FROM city GROUP BY Status ORDER BY COUNT(*) DESC LIMIT 1
+
+1
+hard pred: SELECT c.official_name  FROM city c LEFT JOIN farm_competition fc ON fc.host_city_id = c.city_id  WHERE fc.competition_id IS NULL;
+hard gold: SELECT Official_Name FROM city WHERE City_ID NOT IN (SELECT Host_city_ID FROM farm_competition)
+
+1
+hard pred: SELECT c.official_name  FROM city c LEFT JOIN farm_competition fc ON c.city_id = fc.host_city_id WHERE fc.competition_id IS NULL;
+hard gold: SELECT Official_Name FROM city WHERE City_ID NOT IN (SELECT Host_city_ID FROM farm_competition)
+
+0
+0
+0
+0
+0
+hard pred: SELECT status FROM city WHERE population > 1500 AND population < 500;
+hard gold: SELECT Status FROM city WHERE Population  >  1500 INTERSECT SELECT Status FROM city WHERE Population  <  500
+
+0
+1
+hard pred: SELECT c.status FROM city c JOIN (SELECT city_id        FROM city       WHERE population > 1500) c1 on c1.city_id = c.city_id JOIN (SELECT city_id        FROM city       WHERE population < 500) c2 on c2.city_id = c.city_id;
+hard gold: SELECT Status FROM city WHERE Population  >  1500 INTERSECT SELECT Status FROM city WHERE Population  <  500
+
+1
+1
+1
+easy pred: SELECT c.census_ranking  FROM city c  WHERE c.status != 'Village';
+easy gold: SELECT Census_Ranking FROM city WHERE Status != "Village"
+
+1
+easy pred: SELECT c.census_ranking  FROM city c WHERE c.status != 'Village';
+easy gold: SELECT Census_Ranking FROM city WHERE Status != "Village"
+
+0
+0
+extra pred: SELECT course_name, COUNT(student_id)  FROM courses      INNER JOIN student_course_registrations      ON courses.course_id = student_course_registrations.course_id  GROUP BY course_name  ORDER BY COUNT(student_id) DESC  LIMIT 1;
+extra gold: SELECT T1.course_name FROM courses AS T1 JOIN student_course_registrations AS T2 ON T1.course_id = T2.course_Id GROUP BY T1.course_id ORDER BY count(*) DESC LIMIT 1
+
+1
+extra pred: SELECT course_name FROM courses c JOIN student_course_registrations scr on c.course_id = scr.course_id GROUP BY c.course_name ORDER BY COUNT(scr.student_id) DESC LIMIT 1;
+extra gold: SELECT T1.course_name FROM courses AS T1 JOIN student_course_registrations AS T2 ON T1.course_id = T2.course_Id GROUP BY T1.course_id ORDER BY count(*) DESC LIMIT 1
+
+0
+0
+hard pred: SELECT S.student_id FROM students S   JOIN student_course_registrations SCR      ON SCR.student_id = S.student_id  GROUP BY S.student_id  HAVING COUNT(*) = (  SELECT COUNT(*)   FROM student_course_registrations   WHERE student_id = S.student_id  ORDER BY COUNT(*) ASC   LIMIT 1 );
+hard gold: SELECT student_id FROM student_course_registrations GROUP BY student_id ORDER BY count(*) LIMIT 1
+
+0
+0
+hard pred: SELECT student_id FROM student_course_registrations GROUP BY student_id HAVING COUNT(course_id) = (SELECT MIN(c)                         FROM (SELECT COUNT(cc.course_id) AS c                             FROM student_course_registrations cc                             GROUP BY cc.student_id) AS x);
+hard gold: SELECT student_id FROM student_course_registrations GROUP BY student_id ORDER BY count(*) LIMIT 1
+
+1
+medium pred: SELECT first_name, last_name  FROM people  INNER JOIN candidates  ON people.person_id = candidates.candidate_id;
+medium gold: SELECT T2.first_name ,  T2.last_name FROM candidates AS T1 JOIN people AS T2 ON T1.candidate_id = T2.person_id
+
+1
+medium pred: SELECT c.first_name, c.last_name FROM candidates c  JOIN people p ON c.candidate_id = p.person_id;
+medium gold: SELECT T2.first_name ,  T2.last_name FROM candidates AS T1 JOIN people AS T2 ON T1.candidate_id = T2.person_id
+
+1
+hard pred: SELECT s.student_id  FROM students s  LEFT JOIN student_course_attendance sca on s.student_id = sca.student_id WHERE sca.student_id IS NULL;
+hard gold: SELECT student_id FROM students WHERE student_id NOT IN (SELECT student_id FROM student_course_attendance)
+
+1
+hard pred: SELECT student_id FROM students s LEFT JOIN student_course_attendance sca ON s.student_id = sca.student_id WHERE sca.student_id IS NULL;
+hard gold: SELECT student_id FROM students WHERE student_id NOT IN (SELECT student_id FROM student_course_attendance)
+
+0
+0
+easy pred: SELECT student_id FROM student_course_attendance GROUP BY student_id;
+easy gold: SELECT student_id FROM student_course_attendance
+
+0
+easy pred: SELECT student_id FROM student_course_attendance GROUP BY student_id HAVING COUNT(course_id) > 0;
+easy gold: SELECT student_id FROM student_course_attendance
+
+1
+medium pred: SELECT s.student_id, c.course_name FROM students s INNER JOIN student_course_registrations sc ON s.student_id = sc.student_id INNER JOIN courses c ON sc.course_id = c.course_id;
+medium gold: SELECT T1.student_id ,  T2.course_name FROM student_course_registrations AS T1 JOIN courses AS T2 ON T1.course_id = T2.course_id
+
+0
+0
+hard pred: SELECT s.student_id, s.student_details FROM students s INNER JOIN student_course_registrations sc ON s.student_id = sc.student_id ORDER BY sc.registration_date DESC LIMIT 1;
+hard gold: SELECT T2.student_details FROM student_course_registrations AS T1 JOIN students AS T2 ON T1.student_id = T2.student_id ORDER BY T1.registration_date DESC LIMIT 1
+
+0
+0
+hard pred: SELECT students.*  FROM students  INNER JOIN student_course_registrations  ON students.student_id = student_course_registrations.student_id  ORDER BY student_course_registrations.registration_date DESC  LIMIT 1;
+hard gold: SELECT T2.student_details FROM student_course_registrations AS T1 JOIN students AS T2 ON T1.student_id = T2.student_id ORDER BY T1.registration_date DESC LIMIT 1
+
+1
+medium pred: SELECT COUNT(*) FROM student_course_registrations  INNER JOIN courses ON courses.course_id = student_course_registrations.course_id  WHERE course_name = 'English';
+medium gold: SELECT count(*) FROM courses AS T1 JOIN student_course_attendance AS T2 ON T1.course_id = T2.course_id WHERE T1.course_name = "English"
+
+1
+medium pred: SELECT COUNT(student_id) FROM courses c  
+medium gold: SELECT count(*) FROM courses AS T1 JOIN student_course_attendance AS T2 ON T1.course_id = T2.course_id WHERE T1.course_name = "English"
+
+0
+0
+medium pred: SELECT course_id  FROM student_course_registrations  WHERE student_id = 171;
+medium gold: SELECT count(*) FROM courses AS T1 JOIN student_course_attendance AS T2 ON T1.course_id = T2.course_id WHERE T2.student_id = 171
+
+1
+medium pred: SELECT COUNT(*) FROM student_course_attendance WHERE student_id = 171;
+medium gold: SELECT count(*) FROM courses AS T1 JOIN student_course_attendance AS T2 ON T1.course_id = T2.course_id WHERE T2.student_id = 171
+
+1
+medium pred: SELECT c.candidate_id FROM candidates c INNER JOIN people p ON c.candidate_id = p.person_id WHERE p.email_address = 'stanley.monahan@example.org';
+medium gold: SELECT T2.candidate_id FROM people AS T1 JOIN candidates AS T2 ON T1.person_id = T2.candidate_id WHERE T1.email_address = "stanley.monahan@example.org"
+
+1
+medium pred: SELECT candidate_id  FROM candidates  INNER JOIN people  ON people.person_id = candidates.candidate_id  WHERE people.email_address = 'stanley.monahan@example.org';
+medium gold: SELECT T2.candidate_id FROM people AS T1 JOIN candidates AS T2 ON T1.person_id = T2.candidate_id WHERE T1.email_address = "stanley.monahan@example.org"
+
+1
+medium pred: SELECT c.candidate_id  FROM candidates c  INNER JOIN candidate_assessments ca ON c.candidate_id = ca.candidate_id INNER JOIN student_course_attendance sca ON ca.candidate_id = sca.student_id ORDER BY sca.date_of_attendance DESC LIMIT 1;
+medium gold: SELECT candidate_id FROM candidate_assessments ORDER BY assessment_date DESC LIMIT 1
+
+1
+medium pred: SELECT candidate_id  FROM candidate_assessments a  INNER JOIN student_course_attendance b ON a.candidate_id = b.student_id ORDER BY assessment_date DESC  LIMIT 1;
+medium gold: SELECT candidate_id FROM candidate_assessments ORDER BY assessment_date DESC LIMIT 1
+
+0
+0
+extra pred: SELECT s.student_id, s.student_details FROM students s INNER JOIN student_course_registrations scr ON s.student_id = scr.student_id GROUP BY s.student_id  ORDER BY COUNT(scr.course_id) DESC LIMIT 1;
+extra gold: SELECT T1.student_details FROM students AS T1 JOIN student_course_registrations AS T2 ON T1.student_id = T2.student_id GROUP BY T1.student_id ORDER BY count(*) DESC LIMIT 1
+
+0
+0
+extra pred: SELECT s.student_id, s.student_details  FROM students s INNER JOIN student_course_registrations scr ON s.student_id = scr.student_id  GROUP BY s.student_id  ORDER BY COUNT(*) DESC  LIMIT 1;
+extra gold: SELECT T1.student_details FROM students AS T1 JOIN student_course_registrations AS T2 ON T1.student_id = T2.student_id GROUP BY T1.student_id ORDER BY count(*) DESC LIMIT 1
+
+1
+medium pred: SELECT student_id, COUNT(course_id) as count_course_id  FROM student_course_registrations  GROUP BY student_id
+medium gold: SELECT T1.student_id ,  count(*) FROM students AS T1 JOIN student_course_registrations AS T2 ON T1.student_id = T2.student_id GROUP BY T1.student_id
+
+1
+medium pred: SELECT s.student_id, COUNT(scr.course_id) FROM students s JOIN student_course_registrations scr ON s.student_id = scr.student_id GROUP BY s.student_id;
+medium gold: SELECT T1.student_id ,  count(*) FROM students AS T1 JOIN student_course_registrations AS T2 ON T1.student_id = T2.student_id GROUP BY T1.student_id
+
+1
+hard pred: SELECT c.course_name, COUNT(rc.student_id)  FROM courses c JOIN student_course_registrations rc ON rc.course_id = c.course_id GROUP BY c.course_name;
+hard gold: SELECT T3.course_name ,  count(*) FROM students AS T1 JOIN student_course_registrations AS T2 ON T1.student_id = T2.student_id JOIN courses AS T3 ON T2.course_id = T3.course_id GROUP BY T2.course_id
+
+1
+hard pred: SELECT course_id, COUNT(student_id) AS num_students, course_name  FROM courses c  LEFT JOIN student_course_registrations sc  ON c.course_id = sc.course_id  GROUP BY c.course_id;
+hard gold: SELECT T3.course_name ,  count(*) FROM students AS T1 JOIN student_course_registrations AS T2 ON T1.student_id = T2.student_id JOIN courses AS T3 ON T2.course_id = T3.course_id GROUP BY T2.course_id
+
+1
+easy pred: SELECT candidate_id FROM candidates c  INNER JOIN candidate_assessments ca  ON c.candidate_id = ca.candidate_id WHERE ca.asessment_outcome_code = 'Pass';
+easy gold: SELECT candidate_id FROM candidate_assessments WHERE asessment_outcome_code = "Pass"
+
+1
+easy pred: SELECT candidate_id FROM candidate_assessments WHERE assessment_outcome_code = 'Pass'
+easy gold: SELECT candidate_id FROM candidate_assessments WHERE asessment_outcome_code = "Pass"
+
+1
+hard pred: SELECT p.cell_mobile_number  FROM people p  INNER JOIN candidates c ON p.person_id = c.candidate_id INNER JOIN candidate_assessments ca ON ca.candidate_id = c.candidate_id WHERE ca.asessment_outcome_code = 'Fail';
+hard gold: SELECT T3.cell_mobile_number FROM candidates AS T1 JOIN candidate_assessments AS T2 ON T1.candidate_id = T2.candidate_id JOIN people AS T3 ON T1.candidate_id = T3.person_id WHERE T2.asessment_outcome_code = "Fail"
+
+1
+hard pred: SELECT p.cell_mobile_number FROM people p INNER JOIN candidates c ON p.person_id = c.candidate_id INNER JOIN candidate_assessments ca ON c.candidate_id = ca.candidate_id WHERE ca.assessment_outcome_code = 'Fail';
+hard gold: SELECT T3.cell_mobile_number FROM candidates AS T1 JOIN candidate_assessments AS T2 ON T1.candidate_id = T2.candidate_id JOIN people AS T3 ON T1.candidate_id = T3.person_id WHERE T2.asessment_outcome_code = "Fail"
+
+1
+easy pred: SELECT student_id FROM student_course_registrations WHERE course_id=301;
+easy gold: SELECT student_id FROM student_course_attendance WHERE course_id  =  301
+
+1
+easy pred: SELECT student_id  FROM student_course_registrations  WHERE course_id = 301;
+easy gold: SELECT student_id FROM student_course_attendance WHERE course_id  =  301
+
+0
+0
+0
+0
+0
+hard pred: SELECT student_id FROM student_course_registrations WHERE course_id = 301 ORDER BY registration_date DESC LIMIT 1;
+hard gold: SELECT student_id FROM student_course_attendance WHERE course_id = 301 ORDER BY date_of_attendance DESC LIMIT 1
+
+0
+0
+0
+0
+0
+hard pred: SELECT s.student_id  FROM student_course_registrations s INNER JOIN courses c ON s.course_id = c.course_id WHERE c.course_id = 301 ORDER BY registration_date DESC LIMIT 1;
+hard gold: SELECT student_id FROM student_course_attendance WHERE course_id = 301 ORDER BY date_of_attendance DESC LIMIT 1
+
+1
+easy pred: SELECT DISTINCT city  FROM addresses a  INNER JOIN people_addresses pa  ON a.address_id = pa.address_id  INNER JOIN people p  ON pa.person_id = p.person_id;
+easy gold: SELECT DISTINCT T1.city FROM addresses AS T1 JOIN people_addresses AS T2 ON T1.address_id = T2.address_id
+
+1
+easy pred: SELECT DISTINCT city  FROM addresses  INNER JOIN people_addresses  ON addresses.address_id = people_addresses.address_id;
+easy gold: SELECT DISTINCT T1.city FROM addresses AS T1 JOIN people_addresses AS T2 ON T1.address_id = T2.address_id
+
+1
+0
+0
+medium pred: SELECT DISTINCT city FROM addresses INNER JOIN people_addresses ON addresses.address_id = people_addresses.address_id INNER JOIN people ON people_addresses.person_id = people.person_id INNER JOIN student_course_registrations ON people.person_id = student_course_registrations.student_id;
+medium gold: SELECT DISTINCT T1.city FROM addresses AS T1 JOIN people_addresses AS T2 ON T1.address_id = T2.address_id JOIN students AS T3 ON T2.person_id = T3.student_id
+
+1
+1
+1
+1
+1
+hard pred: SELECT student_id FROM students s INNER JOIN student_course_registrations scr ON s.student_id = scr.student_id INNER JOIN student_course_attendance sca ON s.student_id = sca.student_id;
+hard gold: SELECT student_id FROM student_course_registrations UNION SELECT student_id FROM student_course_attendance
+
+1
+0
+0
+hard pred: SELECT course_id  FROM courses  WHERE course_id IN (SELECT course_id                      FROM student_course_registrations                      WHERE student_id = 121)  OR course_id IN (SELECT course_id                   FROM student_course_attendance                   WHERE student_id = 121);
+hard gold: SELECT course_id FROM student_course_registrations WHERE student_id = 121 UNION SELECT course_id FROM student_course_attendance WHERE student_id = 121
+
+1
+hard pred: SELECT course_id FROM student_course_registrations, student_course_attendance WHERE student_course_registrations.student_id = 121 OR student_course_attendance.student_id = 121;
+hard gold: SELECT course_id FROM student_course_registrations WHERE student_id = 121 UNION SELECT course_id FROM student_course_attendance WHERE student_id = 121
+
+0
+0
+hard pred: SELECT s.student_id, s.student_details  FROM students AS s  INNER JOIN student_course_registrations AS scr ON scr.student_id = s.student_id LEFT JOIN student_course_attendance AS sca ON sca.student_id = s.student_id      AND sca.course_id = scr.course_id WHERE sca.date_of_attendance IS NULL;
+hard gold: SELECT * FROM student_course_registrations WHERE student_id NOT IN (SELECT student_id FROM student_course_attendance)
+
+0
+0
+hard pred: SELECT students.student_id, students.student_details  FROM students  INNER JOIN student_course_registrations      ON students.student_id = student_course_registrations.student_id  LEFT JOIN student_course_attendance      ON student_course_registrations.student_id = student_course_attendance.student_id      AND student_course_registrations.course_id = student_course_attendance.course_id WHERE student_course_attendance.student_id IS NULL;
+hard gold: SELECT * FROM student_course_registrations WHERE student_id NOT IN (SELECT student_id FROM student_course_attendance)
+
+0
+0
+hard pred: SELECT student_id FROM student_course_registrations WHERE course_id = 'statistics' ORDER BY registration_date;
+hard gold: SELECT T2.student_id FROM courses AS T1 JOIN student_course_registrations AS T2 ON T1.course_id = T2.course_id WHERE T1.course_name = "statistics" ORDER BY T2.registration_date
+
+0
+0
+hard pred: SELECT student_id FROM student_course_registrations WHERE course_id = 'statistics' ORDER BY registration_date;
+hard gold: SELECT T2.student_id FROM courses AS T1 JOIN student_course_registrations AS T2 ON T1.course_id = T2.course_id WHERE T1.course_name = "statistics" ORDER BY T2.registration_date
+
+0
+1
+hard pred: SELECT student_id  FROM student_course_attendance  WHERE course_id IN (SELECT course_id                      FROM courses                      WHERE course_name='Statistics') ORDER BY date_of_attendance;
+hard gold: SELECT T2.student_id FROM courses AS T1 JOIN student_course_attendance AS T2 ON T1.course_id = T2.course_id WHERE T1.course_name = "statistics" ORDER BY T2.date_of_attendance
+
+1
+hard pred: SELECT student_id FROM student_course_attendance JOIN courses ON student_course_attendance.course_id = courses.course_id WHERE courses.department = 'Statistics' ORDER BY student_course_attendance.date_of_attendance;
+hard gold: SELECT T2.student_id FROM courses AS T1 JOIN student_course_attendance AS T2 ON T1.course_id = T2.course_id WHERE T1.course_name = "statistics" ORDER BY T2.date_of_attendance
+
+1
+1
+1
+1
+1
+1
+1
+1
+medium pred: SELECT trip.start_station_name AS start_station, trip.end_station_name AS end_station FROM trip ORDER BY trip.id LIMIT 3;
+medium gold: SELECT start_station_name ,  end_station_name FROM trip ORDER BY id LIMIT 3
+
+1
+1
+medium pred: SELECT AVG(lat) AS 'Average Latitude', AVG(long) AS 'Average Longitude' FROM station  WHERE city = 'San Jose';
+medium gold: SELECT avg(lat) ,  avg(long) FROM station WHERE city  =  "San Jose"
+
+1
+1
+1
+medium pred: SELECT SUM(duration) AS total_duration, MAX(duration) AS max_duration  FROM trip  WHERE bike_id = 636;
+medium gold: SELECT sum(duration) ,  max(duration) FROM trip WHERE bike_id  =  636
+
+1
+medium pred: SELECT SUM(trip.duration) AS Total_Duration, MAX(trip.duration) AS Max_Duration  FROM trip  WHERE bike_id = 636;
+medium gold: SELECT sum(duration) ,  max(duration) FROM trip WHERE bike_id  =  636
+
+1
+hard pred: SELECT zip_code, AVG(mean_temperature_f) FROM weather WHERE MONTH(date) = 8 GROUP BY zip_code;
+hard gold: SELECT zip_code  ,  avg(mean_temperature_f) FROM weather WHERE date LIKE "8/%" GROUP BY zip_code
+
+1
+1
+1
+1
+1
+1
+easy pred: SELECT COUNT(*) AS 'Mountain View Stations'  FROM station  WHERE city = 'Mountain View';
+easy gold: SELECT COUNT(*) FROM station WHERE city  =  "Mountain View"
+
+1
+1
+medium pred: SELECT DISTINCT s.name FROM station s INNER JOIN status st ON s.id = st.station_id WHERE st.bikes_available = 7;
+medium gold: SELECT DISTINCT T1.name FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id WHERE T2.bikes_available  =  7
+
+0
+0
+medium pred: SELECT s.name FROM station s   JOIN status st ON st.station_id = s.id WHERE st.bikes_available = 7 GROUP BY s.name;
+medium gold: SELECT DISTINCT T1.name FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id WHERE T2.bikes_available  =  7
+
+1
+extra pred: SELECT start_station_name, start_station_id FROM trip WHERE MONTH(start_date) = 8 GROUP BY start_station_name, start_station_id ORDER BY COUNT(*) DESC LIMIT 1;
+extra gold: SELECT start_station_name ,  start_station_id FROM trip WHERE start_date LIKE "8/%" GROUP BY start_station_name ORDER BY COUNT(*) DESC LIMIT 1
+
+0
+1
+extra pred: SELECT start_station_name, start_station_id FROM trip WHERE start_date LIKE '2018-08%' GROUP BY start_station_name, start_station_id ORDER BY COUNT(*) DESC LIMIT 1;
+extra gold: SELECT start_station_name ,  start_station_id FROM trip WHERE start_date LIKE "8/%" GROUP BY start_station_name ORDER BY COUNT(*) DESC LIMIT 1
+
+1
+1
+extra pred: SELECT t.bike_id  FROM trip t INNER JOIN station s ON t.start_station_id = s.id WHERE s.zip_code = '94002' ORDER BY t.duration DESC LIMIT 1;
+extra gold: SELECT bike_id FROM trip WHERE zip_code  =  94002 GROUP BY bike_id ORDER BY COUNT(*) DESC LIMIT 1
+
+1
+medium pred: SELECT COUNT(DISTINCT date) FROM weather WHERE mean_humidity > 50 AND mean_visibility > 8;
+medium gold: SELECT COUNT(*) FROM weather WHERE mean_humidity  >  50 AND mean_visibility_miles  >  8
+
+1
+medium pred: SELECT COUNT(DISTINCT date)  FROM weather  WHERE mean_humidity > 50  AND mean_visibility_miles > 8;
+medium gold: SELECT COUNT(*) FROM weather WHERE mean_humidity  >  50 AND mean_visibility_miles  >  8
+
+1
+hard pred: SELECT s.lat, s.long, s.city  FROM station s INNER JOIN trip t ON s.id = t.start_station_id ORDER BY t.duration ASC  LIMIT 1;
+hard gold: SELECT T1.lat ,  T1.long ,  T1.city FROM station AS T1 JOIN trip AS T2 ON T1.id  =  T2.start_station_id ORDER BY T2.duration LIMIT 1
+
+1
+hard pred: SELECT s.lat, s.long, s.city FROM station s INNER JOIN trip t ON s.id = t.start_station_id ORDER BY t.duration LIMIT 1;
+hard gold: SELECT T1.lat ,  T1.long ,  T1.city FROM station AS T1 JOIN trip AS T2 ON T1.id  =  T2.start_station_id ORDER BY T2.duration LIMIT 1
+
+1
+hard pred: SELECT id  FROM station  INNER JOIN (SELECT station_id, AVG(bikes_available) AS avg_bike FROM status             GROUP BY station_id) s ON s.station_id = station.id  WHERE city = 'San Francisco'  AND avg_bike > 10;
+hard gold: SELECT id FROM station WHERE city  =  "San Francisco" INTERSECT SELECT station_id FROM status GROUP BY station_id HAVING avg(bikes_available)  >  10
+
+0
+0
+0
+0
+0
+hard pred: SELECT station.id  FROM station  JOIN status ON station.id = status.station_id WHERE station.city = 'San Francisco' AND status.bikes_available > 10;
+hard gold: SELECT id FROM station WHERE city  =  "San Francisco" INTERSECT SELECT station_id FROM status GROUP BY station_id HAVING avg(bikes_available)  >  10
+
+1
+extra pred: SELECT name, id  FROM station  WHERE (SELECT AVG(bikes_available)         FROM status         WHERE status.station_id = station.id         GROUP BY status.station_id) > 14     OR (SELECT MONTHNAME(installation_date) FROM station WHERE station.id = status.station_id) = 'December';
+extra gold: SELECT T1.name ,  T1.id FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id GROUP BY T2.station_id HAVING avg(T2.bikes_available)  >  14 UNION SELECT name ,  id FROM station WHERE installation_date LIKE "12/%"
+
+1
+extra pred: SELECT station.name, station.id  FROM station INNER JOIN status  ON status.station_id = station.id  WHERE AVG(status.bikes_available) > 14  OR MONTH(station.installation_date) = 12;
+extra gold: SELECT T1.name ,  T1.id FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id GROUP BY T2.station_id HAVING avg(T2.bikes_available)  >  14 UNION SELECT name ,  id FROM station WHERE installation_date LIKE "12/%"
+
+0
+0
+0
+0
+0
+extra pred: SELECT      cloud_cover,      COUNT(*) FROM weather  WHERE zip_code = 94107 GROUP BY cloud_cover ORDER BY COUNT(*) DESC LIMIT 3;
+extra gold: SELECT cloud_cover FROM weather WHERE zip_code  =  94107 GROUP BY cloud_cover ORDER BY COUNT (*) DESC LIMIT 3
+
+0
+1
+extra pred: SELECT cloud_cover, COUNT(*) AS 'Number of Occurrences' FROM weather WHERE zip_code = 94107 GROUP BY cloud_cover ORDER BY COUNT(*) DESC LIMIT 3;
+extra gold: SELECT cloud_cover FROM weather WHERE zip_code  =  94107 GROUP BY cloud_cover ORDER BY COUNT (*) DESC LIMIT 3
+
+0
+0
+hard pred: SELECT zip_code, AVG(mean_sea_level_pressure_inches) AS avg_mean_sea_level_pressure FROM weather GROUP BY zip_code ORDER BY avg_mean_sea_level_pressure ASC LIMIT 1;
+hard gold: SELECT zip_code FROM weather GROUP BY zip_code ORDER BY avg(mean_sea_level_pressure_inches) LIMIT 1
+
+0
+0
+hard pred: SELECT zip_code, AVG(mean_sea_level_pressure_inches)  FROM weather  GROUP BY zip_code  ORDER BY AVG(mean_sea_level_pressure_inches)  LIMIT 1;
+hard gold: SELECT zip_code FROM weather GROUP BY zip_code ORDER BY avg(mean_sea_level_pressure_inches) LIMIT 1
+
+1
+extra pred: SELECT AVG(s.bikes_available)  FROM status s  INNER JOIN station st ON s.station_id = st.id  WHERE st.city <> 'Palo Alto';
+extra gold: SELECT avg(bikes_available) FROM status WHERE station_id NOT IN (SELECT id FROM station WHERE city  =  "Palo Alto")
+
+1
+extra pred: SELECT AVG(s.bikes_available)  FROM status s  JOIN station st  ON s.station_id = st.id  WHERE st.city != 'Palo Alto';
+extra gold: SELECT avg(bikes_available) FROM status WHERE station_id NOT IN (SELECT id FROM station WHERE city  =  "Palo Alto")
+
+0
+0
+extra pred: SELECT AVG(long)  FROM station s LEFT JOIN status st on s.id = st.station_id WHERE st.bikes_available <= 10  GROUP BY s.id;
+extra gold: SELECT avg(long) FROM station WHERE id NOT IN (SELECT station_id FROM status GROUP BY station_id HAVING max(bikes_available)  >  10)
+
+0
+0
+extra pred: SELECT AVG(`long`) AS mean_longitude FROM station s JOIN status st ON s.id = st.station_id WHERE st.bikes_available <= 10;
+extra gold: SELECT avg(long) FROM station WHERE id NOT IN (SELECT station_id FROM status GROUP BY station_id HAVING max(bikes_available)  >  10)
+
+0
+0
+medium pred: SELECT date, zip_code FROM weather WHERE max_temperature_f = 80;
+medium gold: SELECT date ,  zip_code FROM weather WHERE max_temperature_f  >=  80
+
+0
+0
+medium pred: SELECT zip_code, max_temperature_f FROM station JOIN status ON station.id = status.station_id JOIN weather ON status.time = weather.date WHERE max_temperature_f >= 80;
+medium gold: SELECT date ,  zip_code FROM weather WHERE max_temperature_f  >=  80
+
+1
+medium pred: SELECT t.id  FROM trip t INNER JOIN station s ON t.start_station_id = s.id INNER JOIN weather w ON s.zip_code = w.zip_code WHERE w.mean_temperature_f > 60;
+medium gold: SELECT T1.id FROM trip AS T1 JOIN weather AS T2 ON T1.zip_code  =  T2.zip_code GROUP BY T2.zip_code HAVING avg(T2.mean_temperature_f)  >  60
+
+1
+medium pred: SELECT trip.id FROM trip  JOIN weather  ON trip.zip_code = weather.zip_code  WHERE weather.mean_temperature_f > 60 GROUP BY trip.zip_code;
+medium gold: SELECT T1.id FROM trip AS T1 JOIN weather AS T2 ON T1.zip_code  =  T2.zip_code GROUP BY T2.zip_code HAVING avg(T2.mean_temperature_f)  >  60
+
+0
+0
+medium pred: SELECT zip_code, COUNT(*) FROM weather WHERE max_wind_speed_mph = 25 GROUP BY zip_code;
+medium gold: SELECT zip_code , count(*) FROM weather WHERE max_wind_Speed_mph  >=  25 GROUP BY zip_code
+
+0
+1
+medium pred: SELECT zip_code, COUNT(*) as 'Number of times max wind speed reaches 25 mph' FROM weather WHERE max_wind_speed_mph = 25 GROUP BY zip_code;
+medium gold: SELECT zip_code , count(*) FROM weather WHERE max_wind_Speed_mph  >=  25 GROUP BY zip_code
+
+0
+0
+extra pred: SELECT date, zip_code FROM weather WHERE min_dew_point_f < ( SELECT min_dew_point_f  FROM weather WHERE zip_code = 94107) AND zip_code <> 94107 ORDER BY min_dew_point_f ASC LIMIT 1;
+extra gold: SELECT date ,  zip_code FROM weather WHERE min_dew_point_f  <  (SELECT min(min_dew_point_f) FROM weather WHERE zip_code  =  94107)
+
+1
+extra pred: SELECT weather.date, weather.zip_code FROM weather  INNER JOIN station  ON weather.zip_code = station.zip_code  WHERE weather.min_dew_point_f < (SELECT min_dew_point_f FROM weather WHERE zip_code = 94107)  ORDER BY weather.min_dew_point_f ASC;
+extra gold: SELECT date ,  zip_code FROM weather WHERE min_dew_point_f  <  (SELECT min(min_dew_point_f) FROM weather WHERE zip_code  =  94107)
+
+0
+0
+medium pred: SELECT  t.end_station_id, s.installation_date FROM trip t LEFT JOIN station s ON t.end_station_id = s.id;
+medium gold: SELECT T1.id ,  T2.installation_date FROM trip AS T1 JOIN station AS T2 ON T1.end_station_id  =  T2.id
+
+0
+0
+medium pred: SELECT s.installation_date  FROM station s  INNER JOIN trip t  ON s.name = t.end_station_name;
+medium gold: SELECT T1.id ,  T2.installation_date FROM trip AS T1 JOIN station AS T2 ON T1.end_station_id  =  T2.id
+
+0
+0
+hard pred: SELECT t.id FROM station AS s  JOIN trip AS t  ON s.id = t.start_station_id WHERE s.dock_count = (SELECT MAX(dock_count) FROM station) ORDER BY t.id DESC LIMIT 1;
+hard gold: SELECT T1.id FROM trip AS T1 JOIN station AS T2 ON T1.start_station_id  =  T2.id ORDER BY T2.dock_count DESC LIMIT 1
+
+1
+hard pred: SELECT t.id  FROM Trip t  INNER JOIN Station s ON t.start_station_id = s.id ORDER BY s.dock_count DESC LIMIT 1;
+hard gold: SELECT T1.id FROM trip AS T1 JOIN station AS T2 ON T1.start_station_id  =  T2.id ORDER BY T2.dock_count DESC LIMIT 1
+
+1
+medium pred: SELECT COUNT(*) FROM trip INNER JOIN station ON trip.end_station_id = station.id WHERE station.city != 'San Francisco';
+medium gold: SELECT count(*) FROM trip AS T1 JOIN station AS T2 ON T1.end_station_id  =  T2.id WHERE T2.city != "San Francisco"
+
+0
+0
+medium pred: SELECT COUNT(*) FROM trip WHERE end_station_name != 'San Francisco';
+medium gold: SELECT count(*) FROM trip AS T1 JOIN station AS T2 ON T1.end_station_id  =  T2.id WHERE T2.city != "San Francisco"
+
+1
+medium pred: SELECT date FROM weather WHERE zip_code = 94107  AND events NOT IN ('Fog', 'Rain')
+medium gold: SELECT date FROM weather WHERE zip_code  =  94107 AND EVENTS != "Fog" AND EVENTS != "Rain"
+
+1
+medium pred: SELECT date  FROM weather  WHERE zip_code = 94107  AND (events NOT IN ('Fog', 'Rain'))
+medium gold: SELECT date FROM weather WHERE zip_code  =  94107 AND EVENTS != "Fog" AND EVENTS != "Rain"
+
+0
+0
+0
+0
+0
+0
+0
+1
+hard pred: SELECT station.id FROM station JOIN status ON station.id = status.station_id WHERE station.lat > 37.4 AND (status.bikes_available > 7     OR NOT EXISTS     (SELECT * FROM status     WHERE station.id = status.station_id     AND status.bikes_available < 7))  GROUP BY station.id;
+hard gold: SELECT id FROM station WHERE lat  >  37.4 EXCEPT SELECT station_id FROM status GROUP BY station_id HAVING min(bikes_available)  <  7
+
+1
+hard pred: SELECT s.id  FROM station s  INNER JOIN status t     ON s.id = t.station_id WHERE s.lat > 37.4 GROUP BY s.id HAVING SUM(t.bikes_available < 7) = 0;
+hard gold: SELECT id FROM station WHERE lat  >  37.4 EXCEPT SELECT station_id FROM status GROUP BY station_id HAVING min(bikes_available)  <  7
+
+1
+extra pred: SELECT s.name  FROM station s JOIN (SELECT station_id, AVG(bikes_available) AS avgbikes        FROM status        GROUP BY station_id) AS st ON (s.id = st.station_id) WHERE s.city != 'San Jose'  AND avgbikes > 10;
+extra gold: SELECT T1.name FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id GROUP BY T2.station_id HAVING avg(bikes_available)  >  10 EXCEPT SELECT name FROM station WHERE city  =  "San Jose"
+
+1
+extra pred: SELECT name  FROM station  WHERE dock_count > 10  AND city != "San Jose"  INNER JOIN status  ON station.id = status.station_id  AND bikes_available > 10;
+extra gold: SELECT T1.name FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id GROUP BY T2.station_id HAVING avg(bikes_available)  >  10 EXCEPT SELECT name FROM station WHERE city  =  "San Jose"
+
+1
+0
+0
+medium pred: SELECT      name, lat, city  FROM      station  ORDER BY      lat DESC  LIMIT 1;
+medium gold: SELECT name ,  lat ,  city FROM station ORDER BY lat LIMIT 1
+
+1
+0
+0
+medium pred: SELECT weather.date, mean_temperature_f, mean_humidity  FROM weather  INNER JOIN (SELECT MAX(max_gust_speed_mph) AS max_gust_speed, date              FROM weather              GROUP BY date              ORDER BY max_gust_speed_mph DESC              LIMIT 3) max_gust_speed_dates  ON weather.date = max_gust_speed_dates.date  ORDER BY weather.date DESC;
+medium gold: SELECT date ,  mean_temperature_f ,  mean_humidity FROM weather ORDER BY max_gust_speed_mph DESC LIMIT 3
+
+1
+medium pred: SELECT city, COUNT(name) FROM station GROUP BY city HAVING COUNT(name) >= 15;
+medium gold: SELECT city ,  COUNT(*) FROM station GROUP BY city HAVING COUNT(*)  >=  15
+
+1
+medium pred: SELECT city, COUNT(*) AS 'number_of_stations' FROM station GROUP BY city HAVING COUNT(*) >= 15;
+medium gold: SELECT city ,  COUNT(*) FROM station GROUP BY city HAVING COUNT(*)  >=  15
+
+1
+medium pred: SELECT station.id, station.name FROM station JOIN trip ON station.id = trip.start_station_id GROUP BY station.id, station.name HAVING COUNT(trip.id) >= 200;
+medium gold: SELECT start_station_id ,  start_station_name FROM trip GROUP BY start_station_name HAVING COUNT(*)  >=  200
+
+1
+medium pred: SELECT s.id, s.name  FROM station s  INNER JOIN trip t ON t.start_station_id = s.id  GROUP BY s.id, s.name  HAVING COUNT(t.id) >= 200;
+medium gold: SELECT start_station_id ,  start_station_name FROM trip GROUP BY start_station_name HAVING COUNT(*)  >=  200
+
+0
+0
+easy pred: SELECT zip_code FROM weather WHERE mean_visibility_miles < 10;
+easy gold: SELECT zip_code FROM weather GROUP BY zip_code HAVING avg(mean_visibility_miles)  <  10
+
+0
+0
+easy pred: SELECT zip_code, AVG(mean_visibility_miles) AS avg_mean_visibility  FROM weather  GROUP BY zip_code  HAVING avg_mean_visibility < 10;
+easy gold: SELECT zip_code FROM weather GROUP BY zip_code HAVING avg(mean_visibility_miles)  <  10
+
+0
+0
+medium pred: SELECT city, MAX(lat) AS Highest_Lat  FROM station  GROUP BY city  ORDER BY Highest_Lat DESC;
+medium gold: SELECT city FROM station GROUP BY city ORDER BY max(lat) DESC
+
+1
+medium pred: SELECT city, name, lat  FROM station  ORDER BY lat DESC  GROUP BY city;
+medium gold: SELECT city FROM station GROUP BY city ORDER BY max(lat) DESC
+
+1
+1
+1
+0
+1
+0
+0
+medium pred: SELECT station.long, AVG(trip.duration) FROM station INNER JOIN trip ON station.id = trip.start_station_id GROUP BY station.long;
+medium gold: SELECT T1.name ,  T1.long ,  avg(T2.duration) FROM station AS T1 JOIN trip AS T2 ON T1.id  =  T2.start_station_id GROUP BY T2.start_station_id
+
+0
+0
+medium pred: SELECT     station.id,     station.name,     station.long,     AVG(trip.duration) as avg_duration FROM station INNER JOIN trip     ON station.id = trip.start_station_id GROUP BY station.id;
+medium gold: SELECT T1.name ,  T1.long ,  avg(T2.duration) FROM station AS T1 JOIN trip AS T2 ON T1.id  =  T2.start_station_id GROUP BY T2.start_station_id
+
+0
+0
+medium pred: SELECT s.lat, MIN(t.duration) FROM station AS s     INNER JOIN trip AS t ON s.id = t.end_station_id GROUP BY s.lat;
+medium gold: SELECT T1.name ,  T1.lat ,  min(T2.duration) FROM station AS T1 JOIN trip AS T2 ON T1.id  =  T2.end_station_id GROUP BY T2.end_station_id
+
+1
+0
+0
+easy pred: SELECT DISTINCT s.name FROM station s INNER JOIN trip t ON t.start_station_id = s.id WHERE t.duration < 100;
+easy gold: SELECT DISTINCT start_station_name FROM trip WHERE duration  <  100
+
+1
+0
+0
+hard pred: SELECT zip_code FROM weather WHERE max_dew_point_f < 70;
+hard gold: SELECT DISTINCT zip_code FROM weather EXCEPT SELECT DISTINCT zip_code FROM weather WHERE max_dew_point_f  >=  70
+
+0
+0
+hard pred: SELECT zip_code  FROM weather  WHERE max_dew_point_f < 70  GROUP BY zip_code;
+hard gold: SELECT DISTINCT zip_code FROM weather EXCEPT SELECT DISTINCT zip_code FROM weather WHERE max_dew_point_f  >=  70
+
+0
+0
+hard pred: SELECT t.id  FROM trip t JOIN      (SELECT AVG(duration) as avg_duration     FROM trip     WHERE zip_code = 94103) d  ON t.duration >= d.avg_duration WHERE t.zip_code = 94103;
+hard gold: SELECT id FROM trip WHERE duration  >=  (SELECT avg(duration) FROM trip WHERE zip_code  =  94103)
+
+0
+0
+hard pred: SELECT t.id  FROM trip t JOIN      (SELECT AVG(duration) AS avg_duration      FROM trip      WHERE zip_code = 94103) AS t2 ON t.duration = t2.avg_duration  WHERE zip_code = 94103;
+hard gold: SELECT id FROM trip WHERE duration  >=  (SELECT avg(duration) FROM trip WHERE zip_code  =  94103)
+
+1
+1
+1
+medium pred: SELECT date, (max_temperature_f - min_temperature_f) as difference FROM weather ORDER BY difference LIMIT 1;
+medium gold: SELECT date ,  max_temperature_f - min_temperature_f FROM weather ORDER BY max_temperature_f - min_temperature_f LIMIT 1
+
+0
+0
+medium pred: SELECT date, MAX(max_temperature_f - min_temperature_f) AS temperature_range FROM weather GROUP BY date ORDER BY temperature_range ASC LIMIT 1;
+medium gold: SELECT date ,  max_temperature_f - min_temperature_f FROM weather ORDER BY max_temperature_f - min_temperature_f LIMIT 1
+
+1
+medium pred: SELECT station.id, station.name  FROM station  INNER JOIN status  ON station.id = status.station_id  WHERE status.bikes_available > 12;
+medium gold: SELECT DISTINCT T1.id ,  T1.name FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id WHERE T2.bikes_available  >  12
+
+1
+medium pred: SELECT station.id, station.name FROM station INNER JOIN status ON station.id = status.station_id WHERE status.bikes_available > 12;
+medium gold: SELECT DISTINCT T1.id ,  T1.name FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id WHERE T2.bikes_available  >  12
+
+1
+hard pred: SELECT zip_code  FROM weather  INNER JOIN trip on trip.zip_code = weather.zip_code  WHERE mean_humidity < 70  GROUP BY zip_code  HAVING count(*)  >= 100;
+hard gold: SELECT zip_code FROM weather GROUP BY zip_code HAVING avg(mean_humidity)  <  70 INTERSECT SELECT zip_code FROM trip GROUP BY zip_code HAVING count(*)  >=  100
+
+0
+0
+0
+0
+0
+hard pred: SELECT t.zip_code FROM trip t INNER JOIN weather w ON t.zip_code = w.zip_code WHERE w.mean_humidity < 70 GROUP BY t.zip_code HAVING COUNT(*) > 100;
+hard gold: SELECT zip_code FROM weather GROUP BY zip_code HAVING avg(mean_humidity)  <  70 INTERSECT SELECT zip_code FROM trip GROUP BY zip_code HAVING count(*)  >=  100
+
+0
+0
+0
+1
+hard pred: SELECT s.name FROM station s INNER JOIN trip t     ON s.name = t.end_station_name WHERE s.city = 'Palo Aler' GROUP BY s.name HAVING COUNT(*) <= 100;
+hard gold: SELECT name FROM station WHERE city  =  "Palo Alto" EXCEPT SELECT end_station_name FROM trip GROUP BY end_station_name HAVING count(*)  >  100
+
+0
+0
+hard pred: SELECT s.name  FROM station s INNER JOIN trip t  
+hard gold: SELECT name FROM station WHERE city  =  "Palo Alto" EXCEPT SELECT end_station_name FROM trip GROUP BY end_station_name HAVING count(*)  >  100
+
+1
+extra pred: SELECT COUNT(*) AS 'Trip Count'  FROM trip  WHERE start_station_id IN (SELECT id                             FROM station                             WHERE city = 'Mountain View')    AND end_station_id IN (SELECT id                           FROM station                           WHERE city = 'Palo Alto');
+extra gold: SELECT count(*) FROM station AS T1 JOIN trip AS T2 JOIN station AS T3 JOIN trip AS T4 ON T1.id  =  T2.start_station_id AND T2.id  =  T4.id AND T3.id  =  T4.end_station_id WHERE T1.city  =  "Mountain View" AND T3.city  =  "Palo Alto"
+
+1
+extra pred: SELECT COUNT(*) FROM trip WHERE start_station_name IN (SELECT name FROM station WHERE city = 'Mountain View')  AND end_station_name IN (SELECT name FROM station WHERE city = 'Palo Alto');
+extra gold: SELECT count(*) FROM station AS T1 JOIN trip AS T2 JOIN station AS T3 JOIN trip AS T4 ON T1.id  =  T2.start_station_id AND T2.id  =  T4.id AND T3.id  =  T4.end_station_id WHERE T1.city  =  "Mountain View" AND T3.city  =  "Palo Alto"
+
+1
+medium pred: SELECT AVG(s.lat) AS avg_lat, AVG(s.long) AS avg_long FROM station s INNER JOIN trip t ON t.start_station_id = s.id;
+medium gold: SELECT avg(T1.lat) ,  avg(T1.long) FROM station AS T1 JOIN trip AS T2 ON T1.id  =  T2.start_station_id
+
+1
+medium pred: SELECT AVG(s.lat), AVG(s.long) FROM station s JOIN trip t ON s.id = t.start_station_id;
+medium gold: SELECT avg(T1.lat) ,  avg(T1.long) FROM station AS T1 JOIN trip AS T2 ON T1.id  =  T2.start_station_id
+
+1
+0
+0
+easy pred: SELECT b.writer FROM book b JOIN publication p ON b.book_id = p.book_id ORDER BY b.writer ASC;
+easy gold: SELECT Writer FROM book ORDER BY Writer ASC
+
+1
+easy pred: SELECT b.title FROM book b ORDER BY b.issues ASC;
+easy gold: SELECT Title FROM book ORDER BY Issues ASC
+
+1
+easy pred: SELECT b.title FROM book b LEFT JOIN publication p ON b.book_id = p.book_id WHERE b.writer != 'Elaine Lee';
+easy gold: SELECT Title FROM book WHERE Writer != "Elaine Lee"
+
+0
+0
+medium pred: SELECT b.title, b.issues FROM book b INNER JOIN publication p ON b.book_id = p.book_id;
+medium gold: SELECT Title ,  Issues FROM book
+
+1
+easy pred: SELECT publication_date  FROM publication  INNER JOIN book  ON publication.book_id = book.book_id  ORDER BY price DESC;
+easy gold: SELECT Publication_Date FROM publication ORDER BY Price DESC
+
+1
+1
+medium pred: SELECT p.publisher FROM publication p INNER JOIN book b ON p.book_id = b.book_id ORDER BY p.price DESC LIMIT 1;
+medium gold: SELECT Publisher FROM publication ORDER BY Price DESC LIMIT 1
+
+1
+1
+medium pred: SELECT b.title, p.publication_date  FROM book b  INNER JOIN publication p  ON b.book_id = p.book_id;
+medium gold: SELECT T1.Title ,  T2.Publication_Date FROM book AS T1 JOIN publication AS T2 ON T1.Book_ID  =  T2.Book_ID
+
+1
+medium pred: SELECT b.writer FROM book b INNER JOIN publication p     ON b.book_id = p.book_id WHERE p.price > 4000000;
+medium gold: SELECT T1.Writer FROM book AS T1 JOIN publication AS T2 ON T1.Book_ID  =  T2.Book_ID WHERE T2.Price  >  4000000
+
+1
+medium pred: SELECT b.title FROM book b INNER JOIN publication p ON b.book_id = p.book_id ORDER BY p.price DESC;
+medium gold: SELECT T1.Title FROM book AS T1 JOIN publication AS T2 ON T1.Book_ID  =  T2.Book_ID ORDER BY T2.Price DESC
+
+1
+easy pred: SELECT publisher FROM publication GROUP BY publisher HAVING COUNT(publication_id) > 1;
+easy gold: SELECT Publisher FROM publication GROUP BY Publisher HAVING COUNT(*)  >  1
+
+1
+medium pred: SELECT publisher, COUNT(publication_id) as NumPublications  FROM publication  GROUP BY publisher;
+medium gold: SELECT Publisher ,  COUNT(*) FROM publication GROUP BY Publisher
+
+0
+0
+hard pred: SELECT publication_date, COUNT(*) AS frequency  FROM publication  GROUP BY publication_date  ORDER BY frequency DESC  LIMIT 1;
+hard gold: SELECT Publication_Date FROM publication GROUP BY Publication_Date ORDER BY COUNT(*) DESC LIMIT 1
+
+1
+easy pred: SELECT b.writer FROM book b GROUP BY b.writer HAVING COUNT(b.book_id) > 1;
+easy gold: SELECT Writer FROM book GROUP BY Writer HAVING COUNT(*)  >  1
+
+1
+hard pred: SELECT b.title FROM book b LEFT JOIN publication p ON b.book_id = p.book_id WHERE p.publication_id IS NULL;
+hard gold: SELECT Title FROM book WHERE Book_ID NOT IN (SELECT Book_ID FROM publication)
+
+0
+0
+0
+0
+0
+hard pred: SELECT DISTINCT publisher  FROM publication  WHERE price > 10000000 OR price < 5000000
+hard gold: SELECT Publisher FROM publication WHERE Price  >  10000000 INTERSECT SELECT Publisher FROM publication WHERE Price  <  5000000
+
+1
+1
+easy pred: SELECT COUNT(DISTINCT(publication_date)) FROM publication;
+easy gold: SELECT COUNT (DISTINCT Publication_Date) FROM publication
+
+1
+medium pred: SELECT price FROM publication WHERE publisher IN ("Person", "Wiley");
+medium gold: SELECT Price FROM publication WHERE Publisher  =  "Person" OR Publisher  =  "Wiley"
+
+1
+1
+easy pred: SELECT COUNT(actor_id) FROM actor;
+easy gold: SELECT count(*) FROM actor
+
+1
+1
+easy pred: SELECT a.name FROM actor a ORDER BY a.name ASC;
+easy gold: SELECT Name FROM actor ORDER BY Name ASC
+
+1
+medium pred: SELECT a.character, a.duration  FROM actor a  JOIN musical m ON a.musical_id = m.musical_id;
+medium gold: SELECT Character ,  Duration FROM actor
+
+0
+0
+medium pred: SELECT actor.name, actor.character, actor.duration  FROM actor  JOIN musical ON musical.musical_id = actor.musical_id;
+medium gold: SELECT Character ,  Duration FROM actor
+
+1
+easy pred: SELECT actor.name  FROM actor  WHERE actor.age <> 20;
+easy gold: SELECT Name FROM actor WHERE Age != 20
+
+1
+easy pred: SELECT a.name FROM actor a WHERE a.age != 20;
+easy gold: SELECT Name FROM actor WHERE Age != 20
+
+1
+1
+1
+1
+medium pred: SELECT MAX(duration) AS duration FROM actor WHERE age = (SELECT MAX(age) FROM actor)
+medium gold: SELECT Duration FROM actor ORDER BY Age DESC LIMIT 1
+
+1
+1
+easy pred: SELECT m.name FROM musicals m JOIN actors a ON m.musical_id = a.musical_id WHERE a.nominee = 'Bob Fosse';
+easy gold: SELECT Name FROM musical WHERE Nominee  =  "Bob Fosse"
+
+1
+0
+0
+easy pred: SELECT nominee  FROM musical  WHERE award != 'Tony Award'  GROUP BY nominee;
+easy gold: SELECT DISTINCT Nominee FROM musical WHERE Award != "Tony Award"
+
+1
+medium pred: SELECT a.name AS 'Actor', m.name AS 'Musical'  FROM actor a  INNER JOIN musical m ON a.musical_id=m.musical_id;
+medium gold: SELECT T1.Name ,  T2.Name FROM actor AS T1 JOIN musical AS T2 ON T1.Musical_ID  =  T2.Musical_ID
+
+1
+medium pred: SELECT a.name AS "Actor Name", m.name AS "Musical Name" FROM actor a INNER JOIN musical m ON a.musical_id = m.musical_id;
+medium gold: SELECT T1.Name ,  T2.Name FROM actor AS T1 JOIN musical AS T2 ON T1.Musical_ID  =  T2.Musical_ID
+
+1
+medium pred: SELECT a.name FROM actor a INNER JOIN musical m ON a.musical_id = m.musical_id WHERE m.name = 'The Phantom of the Opera';
+medium gold: SELECT T1.Name FROM actor AS T1 JOIN musical AS T2 ON T1.Musical_ID  =  T2.Musical_ID WHERE T2.Name  =  "The Phantom of the Opera"
+
+1
+medium pred: SELECT a.name FROM actor a INNER JOIN musical m  ON a.musical_id = m.musical_id WHERE m.name = 'The Phantom of the Opera';
+medium gold: SELECT T1.Name FROM actor AS T1 JOIN musical AS T2 ON T1.Musical_ID  =  T2.Musical_ID WHERE T2.Name  =  "The Phantom of the Opera"
+
+0
+medium pred: SELECT a.name FROM actor a JOIN musical m ON a.musical_id = m.musical_id WHERE m.award = 'YES' ORDER BY m.year DESC;
+medium gold: SELECT T1.Name FROM actor AS T1 JOIN musical AS T2 ON T1.Musical_ID  =  T2.Musical_ID ORDER BY T2.Year DESC
+
+0
+medium pred: SELECT a.name FROM actor a INNER JOIN musical m ON a.musical_id = m.musical_id WHERE m.award = 1 ORDER BY m.year DESC;
+medium gold: SELECT T1.Name FROM actor AS T1 JOIN musical AS T2 ON T1.Musical_ID  =  T2.Musical_ID ORDER BY T2.Year DESC
+
+1
+medium pred: SELECT m.name, COUNT(a.musical_id)  FROM musicals m JOIN actors a ON m.musical_id = a.musical_id GROUP BY m.name;
+medium gold: SELECT T2.Name ,  COUNT(*) FROM actor AS T1 JOIN musical AS T2 ON T1.Musical_ID  =  T2.Musical_ID GROUP BY T1.Musical_ID
+
+0
+medium pred: SELECT musical.name, COUNT(actor.actor_id) AS 'Actors Per Musical'  FROM musical  LEFT OUTER JOIN actor  ON musical.musical_id = actor.musical_id  GROUP BY musical.name;
+medium gold: SELECT T2.Name ,  COUNT(*) FROM actor AS T1 JOIN musical AS T2 ON T1.Musical_ID  =  T2.Musical_ID GROUP BY T1.Musical_ID
+
+1
+medium pred: SELECT musical.name FROM musical  INNER JOIN actor ON musical.musical_id = actor.musical_id GROUP BY musical.name HAVING COUNT(*) >= 3;
+medium gold: SELECT T2.Name FROM actor AS T1 JOIN musical AS T2 ON T1.Musical_ID  =  T2.Musical_ID GROUP BY T1.Musical_ID HAVING COUNT(*)  >=  3
+
+1
+medium pred: SELECT m.name FROM musical m JOIN actor a ON m.musical_id = a.musical_id GROUP BY a.musical_id HAVING COUNT(*) >= 3;
+medium gold: SELECT T2.Name FROM actor AS T1 JOIN musical AS T2 ON T1.Musical_ID  =  T2.Musical_ID GROUP BY T1.Musical_ID HAVING COUNT(*)  >=  3
+
+1
+1
+medium pred: SELECT nominee, COUNT(musical_id) FROM musical GROUP BY nominee;
+medium gold: SELECT Nominee ,  COUNT(*) FROM musical GROUP BY Nominee
+
+0
+0
+hard pred: SELECT nominee, COUNT(*) as num_nominations FROM musical  GROUP BY nominee ORDER BY num_nominations DESC LIMIT 1;
+hard gold: SELECT Nominee FROM musical GROUP BY Nominee ORDER BY COUNT(*) DESC LIMIT 1
+
+0
+0
+hard pred: SELECT nominee, COUNT(*) AS nominations FROM musical  GROUP BY nominee  ORDER BY nominations DESC  LIMIT 1;
+hard gold: SELECT Nominee FROM musical GROUP BY Nominee ORDER BY COUNT(*) DESC LIMIT 1
+
+1
+hard pred: SELECT result, COUNT(*)  FROM musicals  GROUP BY result  ORDER BY COUNT(*) DESC;
+hard gold: SELECT RESULT FROM musical GROUP BY RESULT ORDER BY COUNT(*) DESC LIMIT 1
+
+0
+0
+hard pred: SELECT result, count(*) as frequency FROM musical GROUP BY result ORDER BY frequency DESC LIMIT 1;
+hard gold: SELECT RESULT FROM musical GROUP BY RESULT ORDER BY COUNT(*) DESC LIMIT 1
+
+0
+0
+easy pred: SELECT nominee, COUNT(*) AS Count FROM musical GROUP BY nominee HAVING COUNT(*) > 2;
+easy gold: SELECT Nominee FROM musical GROUP BY Nominee HAVING COUNT(*)  >  2
+
+0
+0
+easy pred: SELECT a.name FROM actor a INNER JOIN musical m on a.musical_id = m.musical_id GROUP BY a.name HAVING COUNT(m.nominee) > 2;
+easy gold: SELECT Nominee FROM musical GROUP BY Nominee HAVING COUNT(*)  >  2
+
+1
+hard pred: SELECT m.name FROM musicals m LEFT OUTER JOIN actors a ON m.musical_id = a.musical_id WHERE a.actor_id IS NULL;
+hard gold: SELECT Name FROM musical WHERE Musical_ID NOT IN (SELECT Musical_ID FROM actor)
+
+1
+hard pred: SELECT m.name FROM musical m LEFT JOIN actor a ON m.musical_id = a.musical_id WHERE a.actor_id IS NULL;
+hard gold: SELECT Name FROM musical WHERE Musical_ID NOT IN (SELECT Musical_ID FROM actor)
+
+0
+1
+hard pred: SELECT DISTINCT n1.nominee  FROM musical m1  INNER JOIN musical m2 ON m1.name = m2.name  INNER JOIN (SELECT nominee, musical_id              FROM musical              WHERE award = 'Tony Award') n1  ON m1.musical_id = n1.musical_id  INNER JOIN (SELECT nominee, musical_id              FROM musical              WHERE award = 'Drama Desk Award') n2  ON m2.musical_id = n2.musical_id;
+hard gold: SELECT Nominee FROM musical WHERE Award  =  "Tony Award" INTERSECT SELECT Nominee FROM musical WHERE Award  =  "Drama Desk Award"
+
+0
+0
+0
+0
+0
+0
+0
+0
+0
+hard pred: SELECT DISTINCT nominee  FROM musical  WHERE category IN ('Tony Award', 'Drama Desk Award')  AND result = 'Nominated';
+hard gold: SELECT Nominee FROM musical WHERE Award  =  "Tony Award" INTERSECT SELECT Nominee FROM musical WHERE Award  =  "Drama Desk Award"
+
+0
+0
+0
+0
+0
+medium pred: SELECT musical.name  FROM musical  INNER JOIN actor ON musical.musical_id = actor.musical_id  WHERE musical.award = 'Bob Fosse' OR musical.award = 'Cleavant Derricks';
+medium gold: SELECT Nominee FROM musical WHERE Award  =  "Tony Award" OR Award  =  "Cleavant Derricks"
+
+0
+0
+0
+0
+0
+0
+0
+0
+0
+medium pred: SELECT a.name  FROM actor a  INNER JOIN musical m ON a.musical_id = m.musical_id  WHERE m.award = 'Bob Fosse' OR m.award = 'Cleavant Derricks'  AND m.category = 'Nominee';
+medium gold: SELECT Nominee FROM musical WHERE Award  =  "Tony Award" OR Award  =  "Cleavant Derricks"
+
+1
+1
+1
+0
+0
+easy pred: SELECT u.name, u.followers  FROM user_profiles u  JOIN tweets t ON t.uid = u.uid  GROUP BY u.name;
+easy gold: SELECT count(*) FROM follows
+
+0
+0
+easy pred: SELECT uid, COUNT(followers) as num_of_followers  FROM user_profiles  GROUP BY uid;
+easy gold: SELECT count(*) FROM follows GROUP BY f1
+
+1
+1
+1
+1
+extra pred: SELECT u.name  FROM user_profiles u  WHERE u.email LIKE '%superstar%' OR u.email LIKE '%edu%';
+extra gold: SELECT name FROM user_profiles WHERE email LIKE '%superstar%' OR email LIKE '%edu%'
+
+1
+medium pred: SELECT t.text  FROM tweets t  WHERE t.text LIKE '%intern%';
+medium gold: SELECT text FROM tweets WHERE text LIKE '%intern%'
+
+1
+0
+1
+extra pred: SELECT u.name  FROM user_profiles u  INNER JOIN user_profiles tyler      ON tyler.name ='Tyler Swift'  WHERE u.followers > tyler.followers;
+extra gold: SELECT T1.name FROM user_profiles AS T1 JOIN follows AS T2 ON T1.uid  =  T2.f1 GROUP BY T2.f1 HAVING count(*)  >  (SELECT count(*) FROM user_profiles AS T1 JOIN follows AS T2 ON T1.uid  =  T2.f1 WHERE T1.name  =  'Tyler Swift')
+
+0
+1
+medium pred: SELECT name, email FROM user_profiles  WHERE followers > 1;
+medium gold: SELECT T1.name ,  T1.email FROM user_profiles AS T1 JOIN follows AS T2 ON T1.uid  =  T2.f1 GROUP BY T2.f1 HAVING count(*)  >  1
+
+1
+medium pred: SELECT u.name  FROM user_profiles u  JOIN tweets t on u.uid = t.uid  GROUP BY t.uid  HAVING COUNT(t.id) > 1;
+medium gold: SELECT T1.name FROM user_profiles AS T1 JOIN tweets AS T2 ON T1.uid  =  T2.uid GROUP BY T2.uid HAVING count(*)  >  1
+
+0
+1
+extra pred: SELECT t.id  FROM tweets t INNER JOIN user_profiles up ON t.uid = up.uid WHERE up.name IN ('Mary', 'Susan') AND up.followers > 0
+extra gold: SELECT T2.f1 FROM user_profiles AS T1 JOIN follows AS T2 ON T1.uid  =  T2.f2 WHERE T1.name  =  "Mary" INTERSECT SELECT T2.f1 FROM user_profiles AS T1 JOIN follows AS T2 ON T1.uid  =  T2.f2 WHERE T1.name  =  "Susan"
+
+0
+0
+1
+hard pred: SELECT t.id FROM tweets t INNER JOIN user_profiles up ON t.uid = up.uid WHERE up.name = 'Mary' OR up.name = 'Susan';
+hard gold: SELECT T2.f1 FROM user_profiles AS T1 JOIN follows AS T2 ON T1.uid  =  T2.f2 WHERE T1.name  =  "Mary" OR T1.name  =  "Susan"
+
+1
+1
+medium pred: SELECT name, email  FROM user_profiles WHERE followers = (SELECT MIN(followers) FROM user_profiles)
+medium gold: SELECT name ,  email FROM user_profiles ORDER BY followers LIMIT 1
+
+1
+0
+0
+medium pred: SELECT u.name FROM user_profiles u INNER JOIN (SELECT uid, COUNT(*) as followers FROM user_profiles GROUP BY uid ORDER BY followers DESC LIMIT 5) t ON u.uid = t.uid;
+medium gold: SELECT name FROM user_profiles ORDER BY followers DESC LIMIT 5
+
+1
+1
+medium pred: SELECT user_profiles.name, COUNT(tweets.id) AS num_tweets FROM user_profiles JOIN tweets ON user_profiles.uid = tweets.uid GROUP BY user_profiles.name;
+medium gold: SELECT T1.name ,  count(*) FROM user_profiles AS T1 JOIN tweets AS T2 ON T1.uid  =  T2.uid GROUP BY T2.uid
+
+1
+medium pred: SELECT u.name, u.partitionid FROM user_profiles u JOIN tweets t on u.uid = t.uid GROUP BY u.uid HAVING COUNT(t.id) < 2;
+medium gold: SELECT T1.name ,  T1.partitionid FROM user_profiles AS T1 JOIN tweets AS T2 ON T1.uid  =  T2.uid GROUP BY T2.uid HAVING count(*)  <  2
+
+1
+medium pred: SELECT u.name, COUNT(t.uid) FROM user_profiles AS u JOIN tweets AS t ON u.uid = t.uid GROUP BY u.name HAVING COUNT(t.uid) > 1;
+medium gold: SELECT T1.name ,  count(*) FROM user_profiles AS T1 JOIN tweets AS T2 ON T1.uid  =  T2.uid GROUP BY T2.uid HAVING count(*)  >  1
+
+1
+0
+0
+hard pred: SELECT AVG(followers) FROM user_profiles INNER JOIN tweets ON user_profiles.uid = tweets.uid;
+hard gold: SELECT avg(followers) FROM user_profiles WHERE UID IN (SELECT UID FROM tweets)
+
+1
+medium pred: SELECT MAX(followers) AS max_followers, SUM(followers) AS total_followers FROM user_profiles;
+medium gold: SELECT max(followers) ,  sum(followers) FROM user_profiles
+
+1
+1
+1
+easy pred: SELECT attribute_data_type FROM attribute_definitions GROUP BY attribute_data_type HAVING COUNT(attribute_id) > 3;
+easy gold: SELECT attribute_data_type FROM Attribute_Definitions GROUP BY attribute_data_type HAVING count(*)  >  3
+
+1
+easy pred: SELECT attribute_data_type FROM attribute_definitions  GROUP BY attribute_data_type HAVING COUNT(attribute_data_type) > 3;
+easy gold: SELECT attribute_data_type FROM Attribute_Definitions GROUP BY attribute_data_type HAVING count(*)  >  3
+
+1
+1
+easy pred: SELECT a.attribute_data_type FROM attribute_definitions a INNER JOIN catalog_contents_additional_attributes b ON a.attribute_id = b.attribute_id WHERE a.attribute_name = 'Green';
+easy gold: SELECT attribute_data_type FROM Attribute_Definitions WHERE attribute_name  =  "Green"
+
+1
+1
+0
+0
+medium pred: SELECT catalog_publisher  FROM catalogs  WHERE catalog_name LIKE '%Murray%';
+medium gold: SELECT distinct(catalog_publisher) FROM catalogs WHERE catalog_publisher LIKE "%Murray%"
+
+1
+0
+1
+hard pred: SELECT catalog_publisher, COUNT(*) AS 'Number of catalogs' FROM catalogs GROUP BY catalog_publisher ORDER BY COUNT(*) DESC LIMIT 1;
+hard gold: SELECT catalog_publisher FROM catalogs GROUP BY catalog_publisher ORDER BY count(*) DESC LIMIT 1
+
+0
+0
+hard pred: SELECT catalog_publisher, COUNT(catalog_id) AS count_publishers FROM catalogs GROUP BY catalog_publisher ORDER BY count_publishers DESC LIMIT 1;
+hard gold: SELECT catalog_publisher FROM catalogs GROUP BY catalog_publisher ORDER BY count(*) DESC LIMIT 1
+
+1
+medium pred: SELECT c.catalog_name, c.date_of_publication FROM catalogs c INNER JOIN catalog_structure cs ON c.catalog_id = cs.catalog_id WHERE cs.catalog_level_number > 5;
+medium gold: SELECT t1.catalog_name ,  t1.date_of_publication FROM catalogs AS t1 JOIN catalog_structure AS t2 ON t1.catalog_id  =  t2.catalog_id WHERE catalog_level_number  >  5
+
+1
+medium pred: SELECT catalogs.catalog_name, catalogs.date_of_publication  FROM catalogs  INNER JOIN catalog_structure ON catalogs.catalog_id = catalog_structure.catalog_id  WHERE catalog_structure.catalog_level_number > 5;
+medium gold: SELECT t1.catalog_name ,  t1.date_of_publication FROM catalogs AS t1 JOIN catalog_structure AS t2 ON t1.catalog_id  =  t2.catalog_id WHERE catalog_level_number  >  5
+
+1
+extra pred: SELECT catalog_contents.catalog_entry_name  FROM catalogs    INNER JOIN catalog_structure ON catalogs.catalog_id = catalog_structure.catalog_id    INNER JOIN catalog_contents ON catalog_structure.catalog_id = catalog_contents.catalog_id    INNER JOIN catalog_contents_additional_attributes ON catalog_contents.catalog_entry_id = catalog_contents_additional_attributes.catalog_entry_id    INNER JOIN ( SELECT a.attribute_id, COUNT(a.attribute_id) as cnt FROM catalog_contents_additional_attributes a INNER JOIN catalog_contents b ON a.catalog_entry_id = b.catalog_entry_id GROUP BY a.attribute_id ORDER BY cnt DESC LIMIT 1 ) t on catalog_contents_additional_attributes.attribute_id = t.attribute_id ;
+extra gold: SELECT t1.catalog_entry_name FROM Catalog_Contents AS t1 JOIN Catalog_Contents_Additional_Attributes AS t2 ON t1.catalog_entry_id  =  t2.catalog_entry_id WHERE t2.attribute_value  =  (SELECT attribute_value FROM Catalog_Contents_Additional_Attributes GROUP BY attribute_value ORDER BY count(*) DESC LIMIT 1)
+
+1
+extra pred: SELECT c1.catalog_entry_name FROM catalog_contents c1 INNER JOIN catalog_contents_additional_attributes c2 ON c1.catalog_entry_id = c2.catalog_entry_id INNER JOIN attribute_definitions a  ON c2.attribute_id = a.attribute_id INNER JOIN catalogs c3 ON c1.catalog_level_number = c3.catalog_level_number GROUP BY c1.catalog_entry_name HAVING COUNT(*) = MAX(COUNT(*))    ORDER BY c1.catalog_entry_name;
+extra gold: SELECT t1.catalog_entry_name FROM Catalog_Contents AS t1 JOIN Catalog_Contents_Additional_Attributes AS t2 ON t1.catalog_entry_id  =  t2.catalog_entry_id WHERE t2.attribute_value  =  (SELECT attribute_value FROM Catalog_Contents_Additional_Attributes GROUP BY attribute_value ORDER BY count(*) DESC LIMIT 1)
+
+1
+medium pred: SELECT catalog_contents.catalog_entry_name FROM catalog_contents JOIN (SELECT MAX(price_in_dollars) AS max_price FROM catalog_contents) AS t ON catalog_contents.price_in_dollars = t.max_price;
+medium gold: SELECT catalog_entry_name FROM catalog_contents ORDER BY price_in_dollars DESC LIMIT 1
+
+1
+medium pred: SELECT ccb.catalog_entry_name FROM catalog_contents_additional_attributes ccaa JOIN catalog_contents ccb     ON ccaa.catalog_entry_id = ccb.catalog_entry_id     AND ccaa.catalog_level_number = ccb.catalog_level_number JOIN attribute_definitions ad     ON ccaa.attribute_id = ad.attribute_id WHERE ad.attribute_name = 'price_in_dollars' ORDER BY ccaa.attribute_1 DESC LIMIT 1;
+medium gold: SELECT catalog_entry_name FROM catalog_contents ORDER BY price_in_dollars DESC LIMIT 1
+
+0
+0
+hard pred: SELECT cl.catalog_level_name FROM catalog_structure AS cl INNER JOIN catalogs AS c      ON c.catalog_id = cl.catalog_id INNER JOIN catalog_contents AS cc 
+hard gold: SELECT t2.catalog_level_name FROM catalog_contents AS t1 JOIN catalog_structure AS t2 ON t1.catalog_level_number  =  t2.catalog_level_number ORDER BY t1.price_in_dollars LIMIT 1
+
+1
+hard pred: SELECT catalog_level_name  FROM catalogs c  INNER JOIN catalog_structure cs ON c.catalog_id = cs.catalog_id  INNER JOIN catalog_contents cc ON cs.catalog_level_number = cc.catalog_level_number  WHERE cc.price_in_dollars =      (SELECT MIN(price_in_dollars)       FROM catalog_contents)  ORDER BY catalog_level_name;
+hard gold: SELECT t2.catalog_level_name FROM catalog_contents AS t1 JOIN catalog_structure AS t2 ON t1.catalog_level_number  =  t2.catalog_level_number ORDER BY t1.price_in_dollars LIMIT 1
+
+1
+1
+medium pred: SELECT AVG(price_in_euros) as 'Average Price in Euros', MIN(price_in_euros) as 'Minimum Price in Euros' FROM catalog_contents;
+medium gold: SELECT avg(price_in_euros) ,  min(price_in_euros) FROM catalog_contents
+
+1
+medium pred: SELECT catalog_contents.catalog_entry_name  FROM catalog_contents WHERE height = (SELECT MAX(height) FROM catalog_contents)
+medium gold: SELECT catalog_entry_name FROM catalog_contents ORDER BY height DESC LIMIT 1
+
+1
+medium pred: SELECT cc.catalog_entry_name FROM catalog_contents cc JOIN (SELECT MAX(cc.height) as 'maxHeight'       FROM catalog_contents cc) maxHeight ON cc.height = maxHeight.maxHeight;
+medium gold: SELECT catalog_entry_name FROM catalog_contents ORDER BY height DESC LIMIT 1
+
+1
+medium pred: SELECT catalog_contents.product_stock_number,         catalog_contents.product_name,         MIN(catalog_contents.capacity)  FROM catalog_contents INNER JOIN catalog_contents_additional_attributes          ON catalog_contents.catalog_entry_id = catalog_contents_additional_attributes.catalog_entry_id  GROUP BY catalog_contents.product_name  ORDER BY catalog_contents.capacity ASC  LIMIT 1;
+medium gold: SELECT catalog_entry_name FROM catalog_contents ORDER BY capacity ASC LIMIT 1
+
+0
+0
+medium pred: SELECT catalog_contents.catalog_entry_name  FROM catalog_contents  JOIN    (SELECT MIN(capacity) AS min_capacity     FROM catalog_contents) AS min_cap  ON catalog_contents.capacity = min_cap.min_capacity;
+medium gold: SELECT catalog_entry_name FROM catalog_contents ORDER BY capacity ASC LIMIT 1
+
+1
+1
+0
+0
+medium pred: SELECT catalog_contents.catalog_entry_name FROM catalog_contents WHERE catalog_contents.catalog_level_number = 8;
+medium gold: SELECT t1.catalog_entry_name FROM Catalog_Contents AS t1 JOIN Catalog_Contents_Additional_Attributes AS t2 ON t1.catalog_entry_id  =  t2.catalog_entry_id WHERE t2.catalog_level_number  =  "8"
+
+0
+0
+medium pred: SELECT catalog_contents.catalog_entry_name FROM catalog_contents WHERE catalog_contents.catalog_level_number = 8;
+medium gold: SELECT t1.catalog_entry_name FROM Catalog_Contents AS t1 JOIN Catalog_Contents_Additional_Attributes AS t2 ON t1.catalog_entry_id  =  t2.catalog_entry_id WHERE t2.catalog_level_number  =  "8"
+
+0
+0
+0
+0
+0
+medium pred: SELECT catalog_contents.catalog_entry_name  FROM catalog_contents  WHERE length < 3 OR height > 5;
+medium gold: SELECT catalog_entry_name FROM catalog_contents WHERE LENGTH  <  3 OR width  >  5
+
+1
+medium pred: SELECT ct.catalog_entry_name  FROM catalog_contents ct  JOIN catalog_contents_additional_attributes ccaa  ON ct.catalog_entry_id = ccaa.catalog_entry_id      AND ct.catalog_level_number = ccaa.catalog_level_number  JOIN attribute_definitions ad  ON ad.attribute_id = ccaa.attribute_id WHERE ad.attribute_name = 'length'  AND (ccaa.attribute_1 < 3 OR ccaa.attribute_1 > 5);
+medium gold: SELECT catalog_entry_name FROM catalog_contents WHERE LENGTH  <  3 OR width  >  5
+
+1
+medium pred: SELECT attribute_definitions.attribute_name, attribute_definitions.attribute_id  FROM attribute_definitions JOIN catalog_contents_additional_attributes  ON  attribute_definitions.attribute_id = catalog_contents_additional_attributes.attribute_id  WHERE catalog_contents_additional_attributes.attribute_1 = '0'
+medium gold: SELECT t1.attribute_name ,  t1.attribute_id FROM Attribute_Definitions AS t1 JOIN Catalog_Contents_Additional_Attributes AS t2 ON t1.attribute_id  =  t2.attribute_id WHERE t2.attribute_value  =  0
+
+1
+medium pred: SELECT attribute_definitions.attribute_name, attribute_definitions.attribute_id FROM attribute_definitions INNER JOIN catalog_contents_additional_attributes     ON attribute_definitions.attribute_id = catalog_contents_additional_attributes.attribute_id WHERE catalog_contents_additional_attributes.attribute_1 = 0
+medium gold: SELECT t1.attribute_name ,  t1.attribute_id FROM Attribute_Definitions AS t1 JOIN Catalog_Contents_Additional_Attributes AS t2 ON t1.attribute_id  =  t2.attribute_id WHERE t2.attribute_value  =  0
+
+0
+0
+medium pred: SELECT ccon.product_stock_number, ccon.capacity FROM catalog_contents AS ccon INNER JOIN catalog_structure AS cstruc ON ccon.catalog_level_number = cstruc.catalog_level_number  WHERE ccon.price_in_dollars > 700;
+medium gold: SELECT catalog_entry_name ,  capacity FROM Catalog_Contents WHERE price_in_dollars  >  700
+
+1
+medium pred: SELECT cc.catalog_entry_name, cc.capacity  FROM catalog_contents cc  INNER JOIN catalog_contents_additional_attributes ccaa    ON cc.catalog_entry_id = ccaa.catalog_entry_id  INNER JOIN attribute_definitions ad    ON ad.attribute_id = ccaa.attribute_id  WHERE ad.attribute_name = 'price'    AND ad.attribute_data_type = 'dollars'    AND ccaa.attribute_1 > 700;
+medium gold: SELECT catalog_entry_name ,  capacity FROM Catalog_Contents WHERE price_in_dollars  >  700
+
+1
+1
+1
+easy pred: SELECT COUNT(DISTINCT catalog_entry_id) FROM catalog_contents;
+easy gold: SELECT count(*) FROM catalog_contents
+
+1
+1
+1
+1
+1
+easy pred: SELECT COUNT(aid) FROM aircraft;
+easy gold: SELECT count(*) FROM Aircraft
+
+1
+1
+medium pred: SELECT a.name, a.distance  FROM aircraft a;
+medium gold: SELECT name ,  distance FROM Aircraft
+
+1
+1
+easy pred: SELECT a.aid FROM aircraft a WHERE a.distance > 1000;
+easy gold: SELECT aid FROM Aircraft WHERE distance  >  1000
+
+1
+1
+1
+medium pred: SELECT name, distance FROM aircraft WHERE aid=12;
+medium gold: SELECT name ,  distance FROM Aircraft WHERE aid  =  12
+
+1
+1
+1
+medium pred: SELECT MIN(distance) AS min_distance, AVG(distance) AS avg_distance, MAX(distance) AS max_distance FROM aircraft;
+medium gold: SELECT min(distance) ,  avg(distance) ,  max(distance) FROM Aircraft
+
+1
+medium pred: SELECT aid, name FROM aircraft WHERE distance = (SELECT MAX(distance) FROM aircraft);
+medium gold: SELECT aid ,  name FROM Aircraft ORDER BY distance DESC LIMIT 1
+
+1
+1
+1
+1
+hard pred: SELECT aircraft.name FROM aircraft INNER JOIN (SELECT AVG(distance) as avg_distance FROM aircraft) AS t1 ON aircraft.distance > t1.avg_distance;
+hard gold: SELECT name FROM Aircraft WHERE distance  >  (SELECT avg(distance) FROM Aircraft)
+
+1
+hard pred: SELECT a.name  FROM aircraft a JOIN (SELECT AVG(distance) as avg_distance FROM aircraft) as avg ON a.distance > avg.avg_distance
+hard gold: SELECT name FROM Aircraft WHERE distance  >  (SELECT avg(distance) FROM Aircraft)
+
+1
+easy pred: SELECT COUNT(eid) FROM employee;
+easy gold: SELECT count(*) FROM Employee
+
+1
+1
+medium pred: SELECT e.name, e.salary FROM employee e ORDER BY e.salary;
+medium gold: SELECT name ,  salary FROM Employee ORDER BY salary
+
+1
+1
+easy pred: SELECT eid FROM employee WHERE salary >= 100000;
+easy gold: SELECT eid FROM Employee WHERE salary  >  100000
+
+1
+easy pred: SELECT eid  FROM employee WHERE salary >= 100000;
+easy gold: SELECT eid FROM Employee WHERE salary  >  100000
+
+1
+1
+1
+1
+medium pred: SELECT e.name, e.salary  FROM employee e WHERE e.eid = 242518965;
+medium gold: SELECT name ,  salary FROM Employee WHERE eid  =  242518965
+
+1
+1
+medium pred: SELECT AVG(salary) AS AvgSalary, MAX(salary) AS LargestSalary FROM employee;
+medium gold: SELECT avg(salary) ,  max(salary) FROM Employee
+
+1
+1
+1
+1
+medium pred: SELECT e.name FROM employee e JOIN (SELECT eid, MIN(salary) as min_salary       FROM employee       GROUP BY eid       ORDER BY min_salary       LIMIT 3) emin ON emin.eid=e.eid;
+medium gold: SELECT name FROM Employee ORDER BY salary ASC LIMIT 3
+
+1
+1
+hard pred: SELECT e.name  FROM employee e  WHERE e.salary > (SELECT AVG(salary) FROM employee)
+hard gold: SELECT name FROM Employee WHERE salary  >  (SELECT avg(salary) FROM Employee)
+
+1
+medium pred: SELECT e.eid, e.salary FROM employee e WHERE e.name = 'Mark Young';
+medium gold: SELECT eid ,  salary FROM Employee WHERE name  =  'Mark Young'
+
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+0
+0
+0
+1
+0
+0
+easy pred: SELECT flno FROM flight  INNER JOIN aircraft on flight.aid = aircraft.aid WHERE aircraft.distance > 2000;
+easy gold: SELECT flno FROM Flight WHERE distance  >  2000
+
+0
+0
+easy pred: SELECT flno  FROM flight  INNER JOIN aircraft  ON flight.aid = aircraft.aid  WHERE aircraft.distance > 2000;
+easy gold: SELECT flno FROM Flight WHERE distance  >  2000
+
+1
+0
+0
+0
+1
+1
+1
+1
+medium pred: SELECT flno, distance FROM flight WHERE price = (SELECT MAX(price) FROM flight)
+medium gold: SELECT flno ,  distance FROM Flight ORDER BY price DESC LIMIT 1
+
+1
+medium pred: SELECT flno, distance  FROM flight  WHERE price = (SELECT MAX(price) FROM flight)
+medium gold: SELECT flno ,  distance FROM Flight ORDER BY price DESC LIMIT 1
+
+0
+0
+medium pred: SELECT flno  FROM flight  JOIN aircraft ON flight.aid = aircraft.aid  ORDER BY aircraft.distance LIMIT 3;
+medium gold: SELECT flno FROM Flight ORDER BY distance ASC LIMIT 3
+
+0
+0
+medium pred: SELECT flno FROM flight  JOIN aircraft ON flight.aid = aircraft.aid WHERE aircraft.distance = (SELECT MIN(distance) FROM flight)
+medium gold: SELECT flno FROM Flight ORDER BY distance ASC LIMIT 3
+
+1
+0
+1
+medium pred: SELECT AVG(f.distance) AS avg_distance, AVG(f.price) AS avg_price FROM flight f  INNER JOIN aircraft a      ON f.aid = a.aid WHERE f.origin = 'LA'
+medium gold: SELECT avg(distance) ,  avg(price) FROM Flight WHERE origin  =  "Los Angeles"
+
+1
+medium pred: SELECT origin, COUNT(flno) AS 'Number of Flights' FROM flight GROUP BY origin;
+medium gold: SELECT origin ,  count(*) FROM Flight GROUP BY origin
+
+1
+medium pred: SELECT origin, COUNT(*) AS total_flights FROM flight GROUP BY origin;
+medium gold: SELECT origin ,  count(*) FROM Flight GROUP BY origin
+
+1
+medium pred: SELECT destination, COUNT(*) AS FlightsToThisDestination  FROM flight  GROUP BY destination;
+medium gold: SELECT destination ,  count(*) FROM Flight GROUP BY destination
+
+1
+medium pred: SELECT destination, COUNT(*) as num_flights FROM flight GROUP BY destination;
+medium gold: SELECT destination ,  count(*) FROM Flight GROUP BY destination
+
+0
+1
+hard pred: SELECT origin, COUNT(*) AS 'Number of Flights'  FROM flight GROUP BY origin  ORDER BY COUNT(*) DESC;
+hard gold: SELECT origin FROM Flight GROUP BY origin ORDER BY count(*) DESC LIMIT 1
+
+0
+0
+hard pred: SELECT origin, COUNT(origin) FROM flight GROUP BY origin ORDER BY 2 DESC
+hard gold: SELECT origin FROM Flight GROUP BY origin ORDER BY count(*) DESC LIMIT 1
+
+0
+0
+hard pred: SELECT destination, COUNT(*) AS num_flights  FROM flight  GROUP BY destination  ORDER BY num_flights ASC  LIMIT 1;
+hard gold: SELECT destination FROM Flight GROUP BY destination ORDER BY count(*) LIMIT 1
+
+0
+0
+hard pred: SELECT destination, COUNT(*) AS flights FROM flight GROUP BY destination ORDER BY flights ASC LIMIT 1;
+hard gold: SELECT destination FROM Flight GROUP BY destination ORDER BY count(*) LIMIT 1
+
+1
+medium pred: SELECT name  FROM aircraft  INNER JOIN flight ON aircraft.aid = flight.aid WHERE flno = 99;
+medium gold: SELECT T2.name FROM Flight AS T1 JOIN Aircraft AS T2 ON T1.aid  =  T2.aid WHERE T1.flno  =  99
+
+1
+medium pred: SELECT a.name  FROM aircraft a JOIN flight f ON a.aid = f.aid WHERE f.flno = 99;
+medium gold: SELECT T2.name FROM Flight AS T1 JOIN Aircraft AS T2 ON T1.aid  =  T2.aid WHERE T1.flno  =  99
+
+1
+medium pred: SELECT flno  FROM flight f INNER JOIN aircraft a ON f.aid = a.aid WHERE a.name = 'Airbus A340-300';
+medium gold: SELECT T1.flno FROM Flight AS T1 JOIN Aircraft AS T2 ON T1.aid  =  T2.aid WHERE T2.name  =  "Airbus A340-300"
+
+1
+medium pred: SELECT flno FROM flight f  JOIN aircraft a ON f.aid = a.aid  WHERE a.name = 'Airbus A340-300';
+medium gold: SELECT T1.flno FROM Flight AS T1 JOIN Aircraft AS T2 ON T1.aid  =  T2.aid WHERE T2.name  =  "Airbus A340-300"
+
+1
+medium pred: SELECT a.name, COUNT(f.flno) AS 'Number of Flights' FROM aircraft a JOIN flight f ON a.aid = f.aid GROUP BY a.name;
+medium gold: SELECT T2.name ,  count(*) FROM Flight AS T1 JOIN Aircraft AS T2 ON T1.aid  =  T2.aid GROUP BY T1.aid
+
+0
+0
+medium pred: SELECT a.name, COUNT(f.flno) AS total_flights FROM aircraft a INNER JOIN certificate c on a.aid = c.aid INNER JOIN employee e on c.eid = e.eid INNER JOIN flight f on a.distance = f.distance GROUP BY a.name;
+medium gold: SELECT T2.name ,  count(*) FROM Flight AS T1 JOIN Aircraft AS T2 ON T1.aid  =  T2.aid GROUP BY T1.aid
+
+1
+medium pred: SELECT a.name FROM aircraft a INNER JOIN flight f ON a.aid = f.aid GROUP BY a.name HAVING COUNT(f.flno) >= 2;
+medium gold: SELECT T2.name FROM Flight AS T1 JOIN Aircraft AS T2 ON T1.aid  =  T2.aid GROUP BY T1.aid HAVING count(*)  >= 2
+
+1
+medium pred: SELECT a.name FROM aircraft a LEFT JOIN flight f ON f.aid = a.aid GROUP BY a.name HAVING COUNT(f.aid) >= 2;
+medium gold: SELECT T2.name FROM Flight AS T1 JOIN Aircraft AS T2 ON T1.aid  =  T2.aid GROUP BY T1.aid HAVING count(*)  >= 2
+
+1
+easy pred: SELECT COUNT(*) FROM certificate WHERE eid IS NOT NULL;
+easy gold: SELECT count(DISTINCT eid) FROM Certificate
+
+1
+1
+hard pred: SELECT eid  FROM employee  WHERE eid NOT IN (   SELECT eid   FROM certificate  );
+hard gold: SELECT eid FROM Employee EXCEPT SELECT eid FROM Certificate
+
+1
+hard pred: SELECT eid FROM employee LEFT JOIN certificate ON employee.eid = certificate.eid WHERE certificate.eid IS NULL;
+hard gold: SELECT eid FROM Employee EXCEPT SELECT eid FROM Certificate
+
+1
+hard pred: SELECT name  FROM aircraft WHERE aid IN (SELECT aid                FROM certificate                WHERE eid IN (SELECT eid                              FROM employee                              WHERE name = 'John Williams'));
+hard gold: SELECT T3.name FROM Employee AS T1 JOIN Certificate AS T2 ON T1.eid  =  T2.eid JOIN Aircraft AS T3 ON T3.aid  =  T2.aid WHERE T1.name  =  "John Williams"
+
+1
+hard pred: SELECT a.name FROM aircraft a INNER JOIN certificate c ON a.aid = c.aid INNER JOIN employee e ON c.eid = e.eid WHERE e.name = 'John Williams';
+hard gold: SELECT T3.name FROM Employee AS T1 JOIN Certificate AS T2 ON T1.eid  =  T2.eid JOIN Aircraft AS T3 ON T3.aid  =  T2.aid WHERE T1.name  =  "John Williams"
+
+1
+hard pred: SELECT e.name  FROM employee e JOIN certificate c ON e.eid = c.eid JOIN aircraft a on c.aid = a.aid WHERE a.name = 'Boeing 737-800';
+hard gold: SELECT T1.name FROM Employee AS T1 JOIN Certificate AS T2 ON T1.eid  =  T2.eid JOIN Aircraft AS T3 ON T3.aid  =  T2.aid WHERE T3.name  =  "Boeing 737-800"
+
+1
+hard pred: SELECT e.name FROM employee e INNER JOIN certificate c ON e.eid = c.eid INNER JOIN aircraft a ON c.aid = a.aid WHERE a.name = 'Boeing 737-800'
+hard gold: SELECT T1.name FROM Employee AS T1 JOIN Certificate AS T2 ON T1.eid  =  T2.eid JOIN Aircraft AS T3 ON T3.aid  =  T2.aid WHERE T3.name  =  "Boeing 737-800"
+
+0
+0
+0
+0
+0
+extra pred: SELECT e.name  FROM employee e  INNER JOIN certificate c ON e.eid=c.eid  INNER JOIN aircraft a ON a.aid=c.aid  WHERE a.name='Boeing 737-800'  AND a.aid IN (SELECT aid                FROM aircraft                WHERE name='Airbus A340-300')
+extra gold: SELECT T1.name FROM Employee AS T1 JOIN Certificate AS T2 ON T1.eid  =  T2.eid JOIN Aircraft AS T3 ON T3.aid  =  T2.aid WHERE T3.name  =  "Boeing 737-800" INTERSECT SELECT T1.name FROM Employee AS T1 JOIN Certificate AS T2 ON T1.eid  =  T2.eid JOIN Aircraft AS T3 ON T3.aid  =  T2.aid WHERE T3.name  =  "Airbus A340-300"
+
+1
+extra pred: SELECT E.name FROM employee E INNER JOIN certificate C ON E.eid = C.eid INNER JOIN aircraft AC ON C.aid = AC.aid WHERE AC.name IN('Boeing 737-800', 'Airbus A340-300') GROUP BY E.name HAVING COUNT(DISTINCT AC.name) = 2;
+extra gold: SELECT T1.name FROM Employee AS T1 JOIN Certificate AS T2 ON T1.eid  =  T2.eid JOIN Aircraft AS T3 ON T3.aid  =  T2.aid WHERE T3.name  =  "Boeing 737-800" INTERSECT SELECT T1.name FROM Employee AS T1 JOIN Certificate AS T2 ON T1.eid  =  T2.eid JOIN Aircraft AS T3 ON T3.aid  =  T2.aid WHERE T3.name  =  "Airbus A340-300"
+
+0
+0
+hard pred: SELECT e.name FROM employee e LEFT JOIN certificate c ON e.eid = c.eid LEFT JOIN aircraft a ON c.aid = a.aid WHERE a.name != 'Boeing 737-800' OR a.name IS NULL;
+hard gold: SELECT name FROM Employee EXCEPT SELECT T1.name FROM Employee AS T1 JOIN Certificate AS T2 ON T1.eid  =  T2.eid JOIN Aircraft AS T3 ON T3.aid  =  T2.aid WHERE T3.name  =  "Boeing 737-800"
+
+0
+0
+hard pred: SELECT e.name FROM employee e LEFT JOIN certificate c     ON e.eid = c.eid LEFT JOIN aircraft a     ON c.aid = a.aid WHERE a.name != 'Boeing 737-800' OR c.eid IS NULL;
+hard gold: SELECT name FROM Employee EXCEPT SELECT T1.name FROM Employee AS T1 JOIN Certificate AS T2 ON T1.eid  =  T2.eid JOIN Aircraft AS T3 ON T3.aid  =  T2.aid WHERE T3.name  =  "Boeing 737-800"
+
+0
+0
+extra pred: SELECT a.name FROM aircraft a  INNER JOIN certificate c ON a.aid = c.aid GROUP BY a.name ORDER BY COUNT(c.eid) ASC LIMIT 1;
+extra gold: SELECT T2.name FROM Certificate AS T1 JOIN Aircraft AS T2 ON T2.aid  =  T1.aid GROUP BY T1.aid ORDER BY count(*) DESC LIMIT 1
+
+0
+0
+extra pred: SELECT a.name FROM aircraft a INNER JOIN (SELECT c.aid, COUNT(*) cnt FROM certificate c GROUP BY c.aid) cnts ON cnts.aid = a.aid ORDER BY cnts.cnt ASC LIMIT 1;
+extra gold: SELECT T2.name FROM Certificate AS T1 JOIN Aircraft AS T2 ON T2.aid  =  T1.aid GROUP BY T1.aid ORDER BY count(*) DESC LIMIT 1
+
+0
+0
+0
+0
+0
+extra pred: SELECT a.name, a.distance FROM aircraft a JOIN certificate c     ON a.aid = c.aid GROUP BY a.name, a.distance HAVING a.distance > 5000 AND COUNT(DISTINCT c.eid) >= 5;
+extra gold: SELECT T2.name FROM Certificate AS T1 JOIN Aircraft AS T2 ON T2.aid  =  T1.aid WHERE T2.distance  >  5000 GROUP BY T1.aid ORDER BY count(*)  >=  5
+
+0
+0
+0
+0
+0
+extra pred: SELECT a.name, a.distance FROM aircraft a INNER JOIN (SELECT aid, COUNT(eid) AS num_certificated             FROM certificate             GROUP BY aid             HAVING num_certificated > 5) n ON a.aid = n.aid WHERE a.distance > 5000;
+extra gold: SELECT T2.name FROM Certificate AS T1 JOIN Aircraft AS T2 ON T2.aid  =  T1.aid WHERE T2.distance  >  5000 GROUP BY T1.aid ORDER BY count(*)  >=  5
+
+1
+extra pred: SELECT e.name, e.salary  FROM employee e INNER JOIN certificate c ON e.eid = c.eid  GROUP BY e.eid  ORDER BY COUNT(c.eid) DESC  LIMIT 1;
+extra gold: SELECT T1.name ,  T1.salary FROM Employee AS T1 JOIN Certificate AS T2 ON T1.eid  =  T2.eid GROUP BY T1.eid ORDER BY count(*) DESC LIMIT 1
+
+1
+extra pred: SELECT e.name, e.salary FROM employee e JOIN certificate c ON e.eid = c.eid JOIN aircraft a ON c.aid = a.aid GROUP BY e.name ORDER BY COUNT(a.aid) DESC LIMIT 1;
+extra gold: SELECT T1.name ,  T1.salary FROM Employee AS T1 JOIN Certificate AS T2 ON T1.eid  =  T2.eid GROUP BY T1.eid ORDER BY count(*) DESC LIMIT 1
+
+0
+0
+0
+0
+0
+extra pred: SELECT e.name, e.salary FROM employee e INNER JOIN certificate c ON c.eid = e.eid INNER JOIN aircraft a ON a.aid = c.aid WHERE a.distance > 5000 GROUP BY e.name ORDER BY COUNT(*) DESC LIMIT 1;
+extra gold: SELECT T1.name FROM Employee AS T1 JOIN Certificate AS T2 ON T1.eid  =  T2.eid JOIN Aircraft AS T3 ON T3.aid  =  T2.aid WHERE T3.distance  >  5000 GROUP BY T1.eid ORDER BY count(*) DESC LIMIT 1
+
+0
+0
+0
+0
+0
+extra pred: SELECT e.name, e.salary FROM employee e INNER JOIN certificate c ON e.eid = c.eid INNER JOIN aircraft a ON c.aid = a.aid WHERE a.distance > 5000 ORDER BY c.eid DESC LIMIT 1;
+extra gold: SELECT T1.name FROM Employee AS T1 JOIN Certificate AS T2 ON T1.eid  =  T2.eid JOIN Aircraft AS T3 ON T3.aid  =  T2.aid WHERE T3.distance  >  5000 GROUP BY T1.eid ORDER BY count(*) DESC LIMIT 1
+
+1
+0
+0
+easy pred: SELECT COUNT(*) FROM has_allergy;
+easy gold: SELECT count(DISTINCT allergy) FROM Allergy_type
+
+1
+1
+easy pred: SELECT COUNT(DISTINCT allergy)  FROM allergy_type;
+easy gold: SELECT count(DISTINCT allergytype) FROM Allergy_type
+
+1
+easy pred: SELECT a.allergytype FROM allergy_type a;
+easy gold: SELECT DISTINCT allergytype FROM Allergy_type
+
+1
+easy pred: SELECT DISTINCT a.allergytype FROM allergy_type a;
+easy gold: SELECT DISTINCT allergytype FROM Allergy_type
+
+0
+0
+medium pred: SELECT a.allergy, a.allergytype  FROM allergy_type a  INNER JOIN has_allergy h ON a.allergy = h.allergy
+medium gold: SELECT allergy ,  allergytype FROM Allergy_type
+
+0
+0
+medium pred: SELECT a.allergy, a.allergytype  FROM allergy_type AS a  JOIN has_allergy AS h ON a.allergy=h.allergy  JOIN student AS s ON h.stuid=s.stuid;
+medium gold: SELECT allergy ,  allergytype FROM Allergy_type
+
+0
+0
+easy pred: SELECT a.allergy, a.allergytype  FROM allergy_type a JOIN has_allergy h ON a.allergy = h.allergy  JOIN student s ON h.stuid = s.stuid WHERE a.allergytype = 'food';
+easy gold: SELECT DISTINCT allergy FROM Allergy_type WHERE allergytype  =  "food"
+
+1
+easy pred: SELECT DISTINCT allergy FROM has_allergy INNER JOIN allergy_type ON has_allergy.allergy = allergy_type.allergy WHERE allergytype = 'food';
+easy gold: SELECT DISTINCT allergy FROM Allergy_type WHERE allergytype  =  "food"
+
+0
+0
+easy pred: SELECT allergytype  FROM allergy_type INNER JOIN has_allergy ON (allergy_type.allergy = has_allergy.allergy) INNER JOIN student ON (has_allergy.stuid = student.stuid) WHERE student.fname = 'Cat';
+easy gold: SELECT allergytype FROM Allergy_type WHERE allergy  =  "Cat"
+
+0
+1
+1
+easy pred: SELECT COUNT(a.allergy) FROM allergy_type a WHERE a.allergytype = 'animal';
+easy gold: SELECT count(*) FROM Allergy_type WHERE allergytype  =  "animal"
+
+0
+1
+0
+0
+medium pred: SELECT allergytype, COUNT(allergy)  FROM allergy_type  INNER JOIN has_allergy USING(allergy)  GROUP BY allergytype;
+medium gold: SELECT allergytype ,  count(*) FROM Allergy_type GROUP BY allergytype
+
+1
+medium pred: SELECT allergytype, COUNT(allergy) as total_allergies FROM allergy_type INNER JOIN has_allergy ON allergy_type.allergy = has_allergy.allergy GROUP BY allergytype;
+medium gold: SELECT allergytype ,  count(*) FROM Allergy_type GROUP BY allergytype
+
+0
+0
+hard pred: SELECT allergytype, COUNT(allergy) AS num_allergies  FROM allergy_type  GROUP BY allergytype ORDER BY num_allergies DESC LIMIT 1;
+hard gold: SELECT allergytype FROM Allergy_type GROUP BY allergytype ORDER BY count(*) DESC LIMIT 1
+
+0
+1
+hard pred: SELECT allergytype, COUNT(*) as 'Number of Allergies' FROM allergy_type a INNER JOIN has_allergy h ON a.allergy = h.allergy GROUP BY allergytype ORDER BY COUNT(*) DESC LIMIT 1;
+hard gold: SELECT allergytype FROM Allergy_type GROUP BY allergytype ORDER BY count(*) DESC LIMIT 1
+
+0
+1
+hard pred: SELECT allergytype, COUNT(*) AS 'number of allergies' FROM allergy_type INNER JOIN has_allergy ON allergy_type.allergy=has_allergy.allergy GROUP BY allergytype ORDER BY 'number of allergies' ASC Limit 1;
+hard gold: SELECT allergytype FROM Allergy_type GROUP BY allergytype ORDER BY count(*) ASC LIMIT 1
+
+0
+0
+hard pred: SELECT allergytype, COUNT(allergytype) AS num_allergies FROM allergy_type INNER JOIN has_allergy ON allergy_type.allergy = has_allergy.allergy GROUP BY allergytype ORDER BY num_allergies  LIMIT 1;
+hard gold: SELECT allergytype FROM Allergy_type GROUP BY allergytype ORDER BY count(*) ASC LIMIT 1
+
+1
+easy pred: SELECT COUNT(DISTINCT stuid)  FROM student;
+easy gold: SELECT count(*) FROM Student
+
+1
+easy pred: SELECT COUNT(stuid) FROM student
+easy gold: SELECT count(*) FROM Student
+
+1
+0
+0
+medium pred: SELECT s.fname, s.lname  FROM student s  JOIN has_allergy h      ON s.stuid = h.stuid JOIN allergy_type a      ON h.allergy = a.allergy;
+medium gold: SELECT Fname ,  Lname FROM Student
+
+1
+0
+0
+easy pred: SELECT DISTINCT advisor  FROM student;
+easy gold: SELECT count(DISTINCT advisor) FROM Student
+
+1
+1
+1
+0
+0
+easy pred: SELECT s.city_code  FROM student s  JOIN has_allergy h  ON s.stuid = h.stuid;
+easy gold: SELECT DISTINCT city_code FROM Student
+
+1
+1
+0
+1
+0
+1
+1
+1
+1
+1
+1
+0
+0
+easy pred: SELECT s.city_code FROM student s INNER JOIN has_allergy h ON s.stuid = h.stuid INNER JOIN allergy_type a ON h.allergy = a.allergy WHERE s.lname = 'Kim';
+easy gold: SELECT city_code FROM Student WHERE LName  =  "Kim"
+
+1
+1
+easy pred: SELECT s.advisor  FROM student s INNER JOIN has_allergy ha ON s.stuid = ha.stuid WHERE s.stuid = 1004;
+easy gold: SELECT Advisor FROM Student WHERE StuID  =  1004
+
+0
+0
+0
+0
+0
+medium pred: SELECT COUNT(DISTINCT stu.stuid) FROM student stu JOIN has_allergy ha ON stu.stuid = ha.stuid JOIN allergy_type aty ON ha.allergy = aty.allergy WHERE stu.city_code IN ('HKG', 'CHI');
+medium gold: SELECT count(*) FROM Student WHERE city_code  =  "HKG" OR city_code  =  "CHI"
+
+1
+medium pred: SELECT COUNT(*) FROM student WHERE city_code IN ('HKG', 'CHI');
+medium gold: SELECT count(*) FROM Student WHERE city_code  =  "HKG" OR city_code  =  "CHI"
+
+1
+medium pred: SELECT MIN(student.age) AS min_age, AVG(student.age) AS avg_age, MAX(student.age) AS max_age FROM student
+medium gold: SELECT min(age) ,  avg(age) ,  max(age) FROM Student
+
+1
+0
+hard pred: SELECT lname  FROM student  ORDER BY age DESC  LIMIT 1;
+hard gold: SELECT LName FROM Student WHERE age  =  (SELECT min(age) FROM Student)
+
+0
+hard pred: SELECT lname FROM student  ORDER BY age DESC LIMIT 1;
+hard gold: SELECT LName FROM Student WHERE age  =  (SELECT min(age) FROM Student)
+
+1
+hard pred: SELECT stuid FROM student ORDER BY age DESC LIMIT 1;
+hard gold: SELECT StuID FROM Student WHERE age  =  (SELECT max(age) FROM Student)
+
+1
+hard pred: SELECT stuid  FROM student  ORDER BY age DESC LIMIT 1;
+hard gold: SELECT StuID FROM Student WHERE age  =  (SELECT max(age) FROM Student)
+
+1
+medium pred: SELECT major, COUNT(*) AS stud_count FROM student GROUP BY major;
+medium gold: SELECT major ,  count(*) FROM Student GROUP BY major
+
+1
+medium pred: SELECT major, COUNT(stuid) FROM student GROUP BY major;
+medium gold: SELECT major ,  count(*) FROM Student GROUP BY major
+
+0
+1
+hard pred: SELECT major, COUNT(*) AS 'Number of Students' FROM student GROUP BY major ORDER BY COUNT(*) DESC LIMIT 1;
+hard gold: SELECT major FROM Student GROUP BY major ORDER BY count(*) DESC LIMIT 1
+
+0
+0
+hard pred: SELECT major, COUNT(major) FROM student GROUP BY major ORDER BY COUNT(major) DESC LIMIT 1;
+hard gold: SELECT major FROM Student GROUP BY major ORDER BY count(*) DESC LIMIT 1
+
+1
+1
+medium pred: SELECT age, COUNT(*) AS 'Num of Students' FROM student GROUP BY age;
+medium gold: SELECT age ,  count(*) FROM Student GROUP BY age
+
+0
+medium pred: SELECT AVG(CASE WHEN sex='Male' THEN age END) AS Male_AvgAge, AVG(CASE WHEN sex='Female' THEN age END) AS Female_AvgAge FROM student;
+medium gold: SELECT avg(age) ,  sex FROM Student GROUP BY sex
+
+0
+0
+medium pred: SELECT AVG(age)  FROM student  GROUP BY sex;
+medium gold: SELECT avg(age) ,  sex FROM Student GROUP BY sex
+
+1
+medium pred: SELECT city_code, COUNT(*) AS 'Number of Students' FROM student GROUP BY city_code;
+medium gold: SELECT city_code ,  count(*) FROM Student GROUP BY city_code
+
+1
+medium pred: SELECT city_code, COUNT(stuid) AS student_count FROM student  GROUP BY city_code;
+medium gold: SELECT city_code ,  count(*) FROM Student GROUP BY city_code
+
+1
+medium pred: SELECT advisor, COUNT(stuid) AS total_students FROM student  GROUP BY advisor;
+medium gold: SELECT advisor ,  count(*) FROM Student GROUP BY advisor
+
+1
+0
+0
+hard pred: SELECT advisor, COUNT(*)  FROM student  GROUP BY advisor  ORDER BY COUNT(*) DESC  LIMIT 1;
+hard gold: SELECT advisor FROM Student GROUP BY advisor ORDER BY count(*) DESC LIMIT 1
+
+0
+1
+hard pred: SELECT advisor, COUNT(*) AS 'Number of Students'  FROM student  GROUP BY advisor  ORDER BY COUNT(*) DESC  LIMIT 1;
+hard gold: SELECT advisor FROM Student GROUP BY advisor ORDER BY count(*) DESC LIMIT 1
+
+0
+0
+easy pred: SELECT COUNT(*)  FROM has_allergy a INNER JOIN allergy_type b ON a.allergy = b.allergy INNER JOIN student c ON a.stuid = c.stuid  WHERE b.allergyType = 'Cat';
+easy gold: SELECT count(*) FROM Has_allergy WHERE Allergy  =  "Cat"
+
+0
+0
+easy pred: SELECT COUNT(*) FROM has_allergy INNER JOIN allergy_type ON has_allergy.allergy = allergy_type.allergy WHERE allergy_type.allergytype = 'cat';
+easy gold: SELECT count(*) FROM Has_allergy WHERE Allergy  =  "Cat"
+
+1
+easy pred: SELECT stuid FROM has_allergy WHERE allergy IN (SELECT allergy FROM allergy_type) GROUP BY stuid HAVING COUNT(allergy) >= 2;
+easy gold: SELECT StuID FROM Has_allergy GROUP BY StuID HAVING count(*)  >=  2
+
+1
+easy pred: SELECT stuid FROM has_allergy GROUP BY stuid HAVING COUNT(allergy) > 1;
+easy gold: SELECT StuID FROM Has_allergy GROUP BY StuID HAVING count(*)  >=  2
+
+1
+hard pred: SELECT stuid  FROM student s  LEFT JOIN has_allergy ha  ON s.stuid = ha.stuid  LEFT JOIN allergy_type a  ON ha.allergy = a.allergy WHERE ha.stuid IS NULL;
+hard gold: SELECT StuID FROM Student EXCEPT SELECT StuID FROM Has_allergy
+
+0
+0
+hard pred: SELECT s.stuid, s.lname, s.fname, s.age, s.sex, s.major, s.advisor, s.city_code  FROM student s LEFT JOIN has_allergy ha ON s.stuid = ha.stuid WHERE ha.allergy IS NULL;
+hard gold: SELECT StuID FROM Student EXCEPT SELECT StuID FROM Has_allergy
+
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+hard pred: SELECT COUNT(*)  FROM student  INNER JOIN has_allergy      ON student.stuid = has_allergy.stuid INNER JOIN allergy_type      ON allergy_type.allergy = has_allergy.allergy  WHERE allergy_type.allergytype IN ('milk', 'egg')  AND student.sex = 'female';
+hard gold: SELECT count(*) FROM has_allergy AS T1 JOIN Student AS T2 ON T1.StuID  =  T2.StuID WHERE T2.sex  =  "F" AND T1.allergy  =  "Milk" OR T1.allergy  =  "Eggs"
+
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+hard pred: SELECT COUNT(*) FROM student s JOIN has_allergy h ON s.stuid = h.stuid  JOIN allergy_type a ON h.allergy = a.allergy WHERE (a.allergytype = 'milk' OR a.allergytype = 'eggs')  AND s.sex = 'female';
+hard gold: SELECT count(*) FROM has_allergy AS T1 JOIN Student AS T2 ON T1.StuID  =  T2.StuID WHERE T2.sex  =  "F" AND T1.allergy  =  "Milk" OR T1.allergy  =  "Eggs"
+
+1
+medium pred: SELECT COUNT(*) FROM has_allergy AS h INNER JOIN allergy_type AS a ON h.allergy = a.allergy WHERE a.allergytype = 'food'
+medium gold: SELECT count(*) FROM Has_allergy AS T1 JOIN Allergy_type AS T2 ON T1.allergy  =  T2.allergy WHERE T2.allergytype  =  "food"
+
+0
+1
+medium pred: SELECT COUNT(DISTINCT stuid) FROM has_allergy JOIN allergy_type ON has_allergy.allergy=allergy_type.allergy WHERE allergytype='Food';
+medium gold: SELECT count(*) FROM Has_allergy AS T1 JOIN Allergy_type AS T2 ON T1.allergy  =  T2.allergy WHERE T2.allergytype  =  "food"
+
+1
+hard pred: SELECT allergy, COUNT(*) FROM allergy_type LEFT JOIN has_allergy ON allergy_type.allergy = has_allergy.allergy GROUP BY allergy ORDER BY COUNT(*) DESC LIMIT 1;
+hard gold: SELECT Allergy FROM Has_allergy GROUP BY Allergy ORDER BY count(*) DESC LIMIT 1
+
+0
+0
+hard pred: SELECT a.allergy, COUNT(*) AS total_occurrences FROM allergy_type a INNER JOIN has_allergy b ON a.allergy = b.allergy GROUP BY a.allergy ORDER BY total_occurrences DESC LIMIT 1;
+hard gold: SELECT Allergy FROM Has_allergy GROUP BY Allergy ORDER BY count(*) DESC LIMIT 1
+
+1
+medium pred: SELECT a.allergy, COUNT(*) AS 'Number of Students Affected' FROM allergy_type a JOIN has_allergy h ON a.allergy = h.allergy GROUP BY a.allergy
+medium gold: SELECT Allergy ,  count(*) FROM Has_allergy GROUP BY Allergy
+
+1
+medium pred: SELECT h.allergy, COUNT(h.stuid)  FROM has_allergy h  JOIN allergy_type a ON h.allergy = a.allergy  GROUP BY h.allergy;
+medium gold: SELECT Allergy ,  count(*) FROM Has_allergy GROUP BY Allergy
+
+1
+medium pred: SELECT allergytype, COUNT(DISTINCT stuid) AS NumStudentsAffected FROM allergy_type JOIN has_allergy ON allergy_type.allergy = has_allergy.allergy GROUP BY allergytype;
+medium gold: SELECT T2.allergytype ,  count(*) FROM Has_allergy AS T1 JOIN Allergy_type AS T2 ON T1.allergy  =  T2.allergy GROUP BY T2.allergytype
+
+1
+medium pred: SELECT allergytype, COUNT(DISTINCT stuid) AS num_affected FROM allergy_type AS a  INNER JOIN has_allergy AS h      ON a.allergy = h.allergy  GROUP BY a.allergytype;
+medium gold: SELECT T2.allergytype ,  count(*) FROM Has_allergy AS T1 JOIN Allergy_type AS T2 ON T1.allergy  =  T2.allergy GROUP BY T2.allergytype
+
+0
+1
+extra pred: SELECT s.lname, s.age FROM student s INNER JOIN has_allergy h1     ON s.stuid = h1.stuid     INNER JOIN has_allergy h2     ON s.stuid = h2.stuid INNER JOIN allergy_type a1     ON a1.allergy = h1.allergy INNER JOIN allergy_type a2     ON a2.allergy = h2.allergy WHERE a1.allergytype = 'milk' AND a2.allergytype = 'cat'
+extra gold: SELECT lname ,  age FROM Student WHERE StuID IN (SELECT StuID FROM Has_allergy WHERE Allergy  =  "Milk" INTERSECT SELECT StuID FROM Has_allergy WHERE Allergy  =  "Cat")
+
+0
+0
+0
+0
+0
+extra pred: SELECT s.lname, s.age FROM student s  JOIN has_allergy ha ON s.stuid = ha.stuid JOIN allergy_type a ON ha.allergy = a.allergy  WHERE a.allergytype = 'Milk' OR a.allergytype = 'Cat'
+extra gold: SELECT lname ,  age FROM Student WHERE StuID IN (SELECT StuID FROM Has_allergy WHERE Allergy  =  "Milk" INTERSECT SELECT StuID FROM Has_allergy WHERE Allergy  =  "Cat")
+
+1
+extra pred: SELECT a.allergy, a.allergytype  FROM student s INNER JOIN has_allergy h ON s.stuid = h.stuid INNER JOIN allergy_type a ON h.allergy = a.allergy WHERE s.fname = 'Lisa' ORDER BY a.allergy ASC;
+extra gold: SELECT T1.Allergy ,  T1.AllergyType FROM Allergy_type AS T1 JOIN Has_allergy AS T2 ON T1.Allergy  =  T2.Allergy JOIN Student AS T3 ON T3.StuID  =  T2.StuID WHERE T3.Fname  =  "Lisa" ORDER BY T1.Allergy
+
+0
+0
+extra pred: SELECT a.allergy, a.allergytype FROM allergy_type a JOIN has_allergy ha on a.allergy = ha.allergy JOIN student s on ha.stuid = s.stuid WHERE s.fname = 'Lisa' AND s.sex = 'Female' ORDER BY a.allergy ASC;
+extra gold: SELECT T1.Allergy ,  T1.AllergyType FROM Allergy_type AS T1 JOIN Has_allergy AS T2 ON T1.Allergy  =  T2.Allergy JOIN Student AS T3 ON T3.StuID  =  T2.StuID WHERE T3.Fname  =  "Lisa" ORDER BY T1.Allergy
+
+0
+0
+0
+0
+0
+extra pred: SELECT fname, sex FROM student WHERE stuid IN (SELECT stuid                  FROM has_allergy                  WHERE allergy IN (SELECT allergy                                   FROM allergy_type                                   WHERE (allergy = 'milk' AND allergytype <> 'cat')));
+extra gold: SELECT fname ,  sex FROM Student WHERE StuID IN (SELECT StuID FROM Has_allergy WHERE Allergy  =  "Milk" EXCEPT SELECT StuID FROM Has_allergy WHERE Allergy  =  "Cat")
+
+0
+0
+0
+0
+0
+extra pred: SELECT fname, sex FROM student JOIN has_allergy ON student.stuid = has_allergy.stuid JOIN allergy_type ON has_allergy.allergy = allergy_type.allergy WHERE (allergy_type.allergytype = 'milk') AND (allergy_type.allergytype != 'cats')
+extra gold: SELECT fname ,  sex FROM Student WHERE StuID IN (SELECT StuID FROM Has_allergy WHERE Allergy  =  "Milk" EXCEPT SELECT StuID FROM Has_allergy WHERE Allergy  =  "Cat")
+
+0
+0
+0
+0
+0
+hard pred: SELECT AVG(student.age) FROM student INNER JOIN has_allergy ON student.stuid = has_allergy.stuid INNER JOIN allergy_type ON has_allergy.allergy = allergy_type.allergy WHERE allergy_type.allergytype IN ('food', 'animal');
+hard gold: SELECT avg(age) FROM Student WHERE StuID IN ( SELECT T1.StuID FROM Has_allergy AS T1 JOIN Allergy_Type AS T2 ON T1.Allergy  =  T2.Allergy WHERE T2.allergytype  =  "food" INTERSECT SELECT T1.StuID FROM Has_allergy AS T1 JOIN Allergy_Type AS T2 ON T1.Allergy  =  T2.Allergy WHERE T2.allergytype  =  "animal")
+
+0
+0
+0
+0
+0
+hard pred: SELECT AVG(age)  FROM student s INNER JOIN has_allergy ha ON s.stuid = ha.stuid INNER JOIN allergy_Type at  ON ha.allergy = at.allergy  WHERE at.allergytype IN ('food', 'animal');
+hard gold: SELECT avg(age) FROM Student WHERE StuID IN ( SELECT T1.StuID FROM Has_allergy AS T1 JOIN Allergy_Type AS T2 ON T1.Allergy  =  T2.Allergy WHERE T2.allergytype  =  "food" INTERSECT SELECT T1.StuID FROM Has_allergy AS T1 JOIN Allergy_Type AS T2 ON T1.Allergy  =  T2.Allergy WHERE T2.allergytype  =  "animal")
+
+1
+extra pred: SELECT fname, lname  FROM student  WHERE stuid NOT IN (     SELECT stuid      FROM has_allergy a      LEFT JOIN allergy_type b      ON a.allergy = b.allergy      WHERE allergytype = 'food' )
+extra gold: SELECT fname ,  lname FROM Student WHERE StuID NOT IN (SELECT T1.StuID FROM Has_allergy AS T1 JOIN Allergy_Type AS T2 ON T1.Allergy  =  T2.Allergy WHERE T2.allergytype  =  "food")
+
+0
+0
+extra pred: SELECT fname, lname FROM student  WHERE NOT EXISTS (   SELECT *   FROM has_allergy   WHERE has_allergy.stuid = student.stuid ) AND NOT EXISTS (   SELECT *   FROM allergy_type   LEFT JOIN has_allergy ON allergy_type.allergy = has_allergy.allergy   WHERE allergy_type.allergytype = 'Food'   AND has_allergy.stuid = student.stuid );
+extra gold: SELECT fname ,  lname FROM Student WHERE StuID NOT IN (SELECT T1.StuID FROM Has_allergy AS T1 JOIN Allergy_Type AS T2 ON T1.Allergy  =  T2.Allergy WHERE T2.allergytype  =  "food")
+
+0
+0
+0
+0
+0
+extra pred: SELECT COUNT(*)  FROM student s INNER JOIN has_allergy ha ON ha.stuid = s.stuid INNER JOIN allergy_type a ON ha.allergy = a.allergy WHERE a.allergytype = 'Food' AND s.sex = 'M';
+extra gold: SELECT count(*) FROM Student WHERE sex  =  "M" AND StuID IN (SELECT StuID FROM Has_allergy AS T1 JOIN Allergy_Type AS T2 ON T1.Allergy  =  T2.Allergy WHERE T2.allergytype  =  "food")
+
+0
+0
+0
+0
+0
+extra pred: SELECT COUNT(*)  FROM student INNER JOIN has_allergy  ON student.stuid = has_allergy.stuid INNER JOIN allergy_type  ON has_allergy.allergy = allergy_type.allergy  WHERE allergytype='food' AND sex = 'M';
+extra gold: SELECT count(*) FROM Student WHERE sex  =  "M" AND StuID IN (SELECT StuID FROM Has_allergy AS T1 JOIN Allergy_Type AS T2 ON T1.Allergy  =  T2.Allergy WHERE T2.allergytype  =  "food")
+
+0
+0
+0
+0
+0
+hard pred: SELECT fname, city_code FROM student INNER JOIN has_allergy ON student.stuid = has_allergy.stuid INNER JOIN allergy_type ON has_allergy.allergy = allergy_type.allergy WHERE allergytype IN ('milk', 'cat') GROUP BY fname, city_code;
+hard gold: SELECT DISTINCT T1.fname ,  T1.city_code FROM Student AS T1 JOIN Has_Allergy AS T2 ON T1.stuid  =  T2.stuid WHERE T2.Allergy  =  "Milk" OR T2.Allergy  =  "Cat"
+
+0
+0
+0
+0
+0
+hard pred: SELECT fname, city_code FROM student JOIN has_allergy ON has_allergy.stuid = student.stuid JOIN allergy_type ON has_allergy.allergy = allergy_type.allergy WHERE allergy_type.allergytype = 'milk' OR allergy_type.allergytype = 'cat' GROUP BY fname, city_code;
+hard gold: SELECT DISTINCT T1.fname ,  T1.city_code FROM Student AS T1 JOIN Has_Allergy AS T2 ON T1.stuid  =  T2.stuid WHERE T2.Allergy  =  "Milk" OR T2.Allergy  =  "Cat"
+
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+extra pred: SELECT COUNT(DISTINCT student.stuid) FROM student  JOIN has_allergy  ON has_allergy.stuid = student.stuid JOIN allergy_type ON has_allergy.allergy = allergy_type.allergy WHERE student.age > 18 AND allergy_type.allergytype NOT IN ('food', 'animal');
+extra gold: SELECT count(*) FROM Student WHERE age  >  18 AND StuID NOT IN ( SELECT StuID FROM Has_allergy AS T1 JOIN Allergy_Type AS T2 ON T1.Allergy  =  T2.Allergy WHERE T2.allergytype  =  "food" OR T2.allergytype  =  "animal")
+
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+extra pred: SELECT COUNT(*)  FROM student s  JOIN has_allergy ha ON s.stuid = ha.stuid JOIN allergy_type at ON ha.allergy = at.allergy WHERE s.age > 18  AND (at.allergytype != 'food' OR at.allergytype != 'animal');
+extra gold: SELECT count(*) FROM Student WHERE age  >  18 AND StuID NOT IN ( SELECT StuID FROM Has_allergy AS T1 JOIN Allergy_Type AS T2 ON T1.Allergy  =  T2.Allergy WHERE T2.allergytype  =  "food" OR T2.allergytype  =  "animal")
+
+0
+0
+extra pred: SELECT fname, major  FROM student  WHERE stuid NOT IN (SELECT stuid FROM has_allergy WHERE allergy IN (SELECT allergy FROM allergy_type WHERE allergytype = 'soy'))
+extra gold: SELECT fname ,  major FROM Student WHERE StuID NOT IN (SELECT StuID FROM Has_allergy WHERE Allergy  =  "Soy")
+
+0
+0
+extra pred: SELECT fname, major FROM student s JOIN has_allergy ha ON s.stuid = ha.stuid JOIN allergy_type a ON ha.allergy = a.allergy WHERE a.allergytype = 'safe' AND ha.allergy = 'soy';
+extra gold: SELECT fname ,  major FROM Student WHERE StuID NOT IN (SELECT StuID FROM Has_allergy WHERE Allergy  =  "Soy")
+
+1
+hard pred: SELECT country, COUNT(*) AS num_invoices  FROM invoices  GROUP BY country  ORDER BY num_invoices DESC  LIMIT 5;
+hard gold: SELECT billing_country ,  COUNT(*) FROM invoices GROUP BY billing_country ORDER BY count(*) DESC LIMIT 5;
+
+1
+hard pred: SELECT billing_country, COUNT(*) as invoice_count FROM invoices GROUP BY billing_country ORDER BY invoice_count DESC LIMIT 5;
+hard gold: SELECT billing_country ,  COUNT(*) FROM invoices GROUP BY billing_country ORDER BY count(*) DESC LIMIT 5;
+
+1
+hard pred: SELECT billing_country, SUM(total) as Gross_Invoice_Size FROM invoices GROUP BY billing_country ORDER BY Gross_Invoice_Size DESC LIMIT 8;
+hard gold: SELECT billing_country ,  SUM(total) FROM invoices GROUP BY billing_country ORDER BY SUM(total) DESC LIMIT 8;
+
+1
+hard pred: SELECT billing_country, SUM(total) AS total_invoice_size  FROM invoices GROUP BY billing_country ORDER BY total_invoice_size DESC LIMIT 8;
+hard gold: SELECT billing_country ,  SUM(total) FROM invoices GROUP BY billing_country ORDER BY SUM(total) DESC LIMIT 8;
+
+1
+hard pred: SELECT billing_country, AVG(total) AS avg_invoice_size  FROM invoices  GROUP BY billing_country  ORDER BY avg_invoice_size DESC  LIMIT 10;
+hard gold: SELECT billing_country ,  AVG(total) FROM invoices GROUP BY billing_country ORDER BY AVG(total) DESC LIMIT 10;
+
+0
+1
+hard pred: SELECT billing_country AS Country, AVG(total) AS 'Average Invoice Size' FROM invoices GROUP BY Country ORDER BY AVG(total) DESC LIMIT 5;
+hard gold: SELECT billing_country ,  AVG(total) FROM invoices GROUP BY billing_country ORDER BY AVG(total) DESC LIMIT 10;
+
+1
+hard pred: SELECT c.first_name, c.last_name FROM customers c  INNER JOIN invoices i  ON c.id = i.customer_id  ORDER BY i.invoice_date DESC  LIMIT 5;
+hard gold: SELECT T1.first_name ,  T1.last_name FROM customers AS T1 JOIN invoices AS T2 ON T2.customer_id  =  T1.id ORDER BY T2.invoice_date DESC LIMIT 5;
+
+1
+hard pred: SELECT c.first_name, c.last_name FROM customers c JOIN invoices i ON c.id = i.customer_id ORDER BY i.invoice_date DESC  LIMIT 5;
+hard gold: SELECT T1.first_name ,  T1.last_name FROM customers AS T1 JOIN invoices AS T2 ON T2.customer_id  =  T1.id ORDER BY T2.invoice_date DESC LIMIT 5;
+
+1
+extra pred: SELECT c.first_name, c.last_name, COUNT(DISTINCT i.id) AS total_num_orders FROM customers c INNER JOIN invoices i ON c.id = i.customer_id GROUP BY c.id ORDER BY total_num_orders DESC LIMIT 10;
+extra gold: SELECT T1.first_name ,  T1.last_name ,  COUNT(*) FROM customers AS T1 JOIN invoices AS T2 ON T2.customer_id  =  T1.id GROUP BY T1.id ORDER BY COUNT(*) DESC LIMIT 10;
+
+1
+extra pred: SELECT    c.first_name,   c.last_name,   COUNT(i.id) AS total_orders FROM customers c JOIN invoices i   ON c.id = i.customer_id GROUP BY c.id ORDER BY total_orders DESC LIMIT 10;
+extra gold: SELECT T1.first_name ,  T1.last_name ,  COUNT(*) FROM customers AS T1 JOIN invoices AS T2 ON T2.customer_id  =  T1.id GROUP BY T1.id ORDER BY COUNT(*) DESC LIMIT 10;
+
+0
+0
+extra pred: SELECT customers.first_name, customers.last_name, SUM(invoices.total) AS Total_Gross_Sales FROM customers INNER JOIN invoices ON customers.id = invoices.customer_id GROUP BY customers.first_name, customers.last_name ORDER BY Total_Gross_Sales DESC LIMIT 10;
+extra gold: SELECT T1.first_name ,  T1.last_name ,  SUM(T2.total) FROM customers AS T1 JOIN invoices AS T2 ON T2.customer_id  =  T1.id GROUP BY T1.id ORDER BY SUM(T2.total) DESC LIMIT 10;
+
+0
+0
+extra pred: SELECT c.first_name, c.last_name, SUM(il.unit_price * il.quantity) AS gross_sales FROM customers AS c JOIN invoices AS i ON c.id = i.customer_id JOIN invoice_lines AS il ON i.id = il.invoice_id GROUP BY c.id ORDER BY gross_sales DESC LIMIT 10;
+extra gold: SELECT T1.first_name ,  T1.last_name ,  SUM(T2.total) FROM customers AS T1 JOIN invoices AS T2 ON T2.customer_id  =  T1.id GROUP BY T1.id ORDER BY SUM(T2.total) DESC LIMIT 10;
+
+1
+extra pred: SELECT g.name, COUNT(t.id) as total_tracks FROM genres g INNER JOIN tracks t ON t.genre_id = g.id GROUP BY g.name ORDER BY total_tracks DESC LIMIT 5;
+extra gold: SELECT T1.name ,  COUNT(*) FROM genres AS T1 JOIN tracks AS T2 ON T2.genre_id  =  T1.id GROUP BY T1.id ORDER BY count(*) DESC LIMIT 5;
+
+1
+extra pred: SELECT g.name AS Genre,  COUNT(t.id) AS Total_Tracks,  GROUP_CONCAT(t.name ORDER BY t.id DESC SEPARATOR ', ') AS Top_5_Tracks  FROM genres g INNER JOIN tracks t ON t.genre_id = g.id  GROUP BY genre  ORDER BY Total_Tracks DESC;
+extra gold: SELECT T1.name ,  COUNT(*) FROM genres AS T1 JOIN tracks AS T2 ON T2.genre_id  =  T1.id GROUP BY T1.id ORDER BY count(*) DESC LIMIT 5;
+
+1
+1
+easy pred: SELECT albums.title  FROM albums  ORDER BY title;
+easy gold: SELECT title FROM albums;
+
+1
+1
+1
+1
+1
+hard pred: SELECT c.first_name, c.last_name  FROM customers c  INNER JOIN invoices i ON c.id = i.customer_id ORDER BY i.total ASC  LIMIT 10;
+hard gold: SELECT T1.first_name ,  T1.last_name FROM customers AS T1 JOIN invoices AS T2 ON T2.customer_id  =  T1.id ORDER BY total LIMIT 10;
+
+1
+hard pred: SELECT c.first_name, c.last_name  FROM customers c INNER JOIN invoices i   ON c.id = i.customer_id ORDER BY i.total ASC  LIMIT 10;
+hard gold: SELECT T1.first_name ,  T1.last_name FROM customers AS T1 JOIN invoices AS T2 ON T2.customer_id  =  T1.id ORDER BY total LIMIT 10;
+
+1
+medium pred: SELECT SUM(invoices.total) FROM invoices  INNER JOIN customers ON customers.id = invoices.customer_id WHERE customers.city = 'Chicago' AND customers.state = 'IL';
+medium gold: SELECT sum(total) FROM invoices WHERE billing_city  =  "Chicago" AND billing_state  =  "IL";
+
+1
+medium pred: SELECT SUM(i.total) FROM invoices i  INNER JOIN customers c ON i.customer_id = c.id WHERE c.billing_city = 'Chicago' AND c.billing_state = 'Illinois';
+medium gold: SELECT sum(total) FROM invoices WHERE billing_city  =  "Chicago" AND billing_state  =  "IL";
+
+1
+medium pred: SELECT COUNT(*) AS 'Number of Invoices From Chicago, IL'  FROM invoices  WHERE billing_city = 'Chicago' AND billing_state = 'IL';
+medium gold: SELECT COUNT(*) FROM invoices WHERE billing_city  =  "Chicago" AND billing_state  =  "IL";
+
+1
+1
+medium pred: SELECT billing_state, COUNT(*) AS num_invoices FROM invoices WHERE billing_country = 'USA' GROUP BY billing_state;
+medium gold: SELECT billing_state ,  COUNT(*) FROM invoices WHERE billing_country  =  "USA" GROUP BY billing_state;
+
+0
+0
+medium pred: SELECT billing_state, COUNT(*) AS num_invoices  FROM invoices  GROUP BY billing_state;
+medium gold: SELECT billing_state ,  COUNT(*) FROM invoices WHERE billing_country  =  "USA" GROUP BY billing_state;
+
+0
+1
+extra pred: SELECT billing_state, COUNT(*) FROM invoices WHERE billing_country ='US' GROUP BY billing_state ORDER BY COUNT(*) DESC LIMIT 1;
+extra gold: SELECT billing_state ,  COUNT(*) FROM invoices WHERE billing_country  =  "USA" GROUP BY billing_state ORDER BY COUNT(*) DESC LIMIT 1;
+
+0
+0
+extra pred: SELECT billing_state, COUNT(billing_state) AS total_invoices FROM invoices GROUP BY billing_state ORDER BY total_invoices DESC;
+extra gold: SELECT billing_state ,  COUNT(*) FROM invoices WHERE billing_country  =  "USA" GROUP BY billing_state ORDER BY COUNT(*) DESC LIMIT 1;
+
+0
+1
+medium pred: SELECT COUNT(*) AS "Number of Invoices", SUM(total) AS "Total" FROM invoices WHERE billing_state = 'California';
+medium gold: SELECT billing_state ,  COUNT(*) ,  SUM(total) FROM invoices WHERE billing_state  =  "CA";
+
+0
+0
+medium pred: SELECT COUNT(*), SUM(total) FROM invoices WHERE billing_state = 'CA';
+medium gold: SELECT billing_state ,  COUNT(*) ,  SUM(total) FROM invoices WHERE billing_state  =  "CA";
+
+1
+medium pred: SELECT al.title  FROM albums al  INNER JOIN artists ar ON al.artist_id = ar.id  WHERE ar.name = 'Aerosmith';
+medium gold: SELECT T1.title FROM albums AS T1 JOIN artists AS T2 ON  T1.artist_id = T2.id WHERE T2.name = "Aerosmith";
+
+1
+medium pred: SELECT a.title FROM albums a INNER JOIN artists ar ON a.artist_id = ar.id WHERE ar.name = 'Aerosmith';
+medium gold: SELECT T1.title FROM albums AS T1 JOIN artists AS T2 ON  T1.artist_id = T2.id WHERE T2.name = "Aerosmith";
+
+1
+medium pred: SELECT COUNT(*) FROM albums a JOIN artists ar ON a.artist_id = ar.id WHERE ar.name = 'Billy Cobham';
+medium gold: SELECT count(*) FROM albums AS T1 JOIN artists AS T2 ON  T1.artist_id = T2.id WHERE T2.name = "Billy Cobham";
+
+1
+medium pred: SELECT COUNT(a.id)  FROM albums a  INNER JOIN artists ar  ON a.artist_id = ar.id  WHERE ar.name = 'Billy Cobham';
+medium gold: SELECT count(*) FROM albums AS T1 JOIN artists AS T2 ON  T1.artist_id = T2.id WHERE T2.name = "Billy Cobham";
+
+1
+medium pred: SELECT c.company  FROM customers c  WHERE c.first_name = 'Eduardo'  AND c.last_name = 'Martins';
+medium gold: SELECT company FROM customers WHERE first_name = "Eduardo" AND last_name = "Martins";
+
+1
+medium pred: SELECT company FROM customers WHERE last_name='Martins' AND first_name='Eduardo';
+medium gold: SELECT company FROM customers WHERE first_name = "Eduardo" AND last_name = "Martins";
+
+0
+0
+0
+0
+0
+medium pred: SELECT e.email, e.phone FROM employees AS e JOIN customers AS c ON e.id = c.support_rep_id WHERE c.first_name = 'Astrid' AND c.last_name = 'Gruber';
+medium gold: SELECT email ,  phone FROM customers WHERE first_name = "Astrid" AND last_name = "Gruber";
+
+1
+medium pred: SELECT c.email, c.phone FROM customers c WHERE c.first_name = 'Astrid' AND c.last_name = 'Gruber';
+medium gold: SELECT email ,  phone FROM customers WHERE first_name = "Astrid" AND last_name = "Gruber";
+
+1
+1
+1
+0
+1
+0
+0
+0
+0
+0
+medium pred: SELECT country FROM employees WHERE first_name = 'Roberto'  AND last_name = 'Almeida';
+medium gold: SELECT country FROM customers WHERE first_name = "Roberto" AND last_name = "Almeida";
+
+1
+medium pred: SELECT country FROM employees JOIN customers ON customers.support_rep_id = employees.id WHERE first_name = 'Roberto' AND last_name = 'Almeida';
+medium gold: SELECT country FROM customers WHERE first_name = "Roberto" AND last_name = "Almeida";
+
+1
+hard pred: SELECT albums.title FROM albums INNER JOIN artists ON albums.artist_id = artists.id WHERE artists.name LIKE '%Led%';
+hard gold: SELECT T2.title FROM artists AS T1 JOIN albums AS T2 ON T1.id  =  T2.artist_id WHERE T1.name LIKE '%Led%'
+
+1
+1
+medium pred: SELECT COUNT(*) FROM customers c JOIN employees e ON c.support_rep_id = e.id WHERE e.first_name = 'Steve' AND e.last_name = 'Johnson';
+medium gold: SELECT count(*) FROM employees AS T1 JOIN customers AS T2 ON T2.support_rep_id = T1.id WHERE T1.first_name = "Steve" AND T1.last_name = "Johnson";
+
+1
+medium pred: SELECT COUNT(*) FROM customers INNER JOIN employees ON customers.support_rep_id = employees.id WHERE employees.first_name = 'Steve' AND employees.last_name = 'Johnson';
+medium gold: SELECT count(*) FROM employees AS T1 JOIN customers AS T2 ON T2.support_rep_id = T1.id WHERE T1.first_name = "Steve" AND T1.last_name = "Johnson";
+
+0
+0
+0
+0
+0
+medium pred: SELECT employees.first_name, employees.last_name, employees.phone, employees.hire_date  FROM employees WHERE employees.first_name = 'Nancy' AND employees.last_name = 'Edwards';
+medium gold: SELECT title ,  phone ,  hire_date FROM employees WHERE first_name = "Nancy" AND last_name = "Edwards";
+
+1
+1
+extra pred: SELECT CONCAT(first_name, ' ', last_name) FROM employees WHERE reports_to = (SELECT id                     FROM employees                     WHERE first_name = 'Nancy'                     AND last_name = 'Edwards');
+extra gold: SELECT T2.first_name , T2.last_name FROM employees AS T1 JOIN employees AS T2 ON T1.id = T2.reports_to WHERE T1.first_name = "Nancy" AND T1.last_name = "Edwards";
+
+1
+extra pred: SELECT first_name, last_name FROM employees  WHERE reports_to = (SELECT id                      FROM employees                      WHERE first_name = 'Nancy' AND last_name = 'Edwards');
+extra gold: SELECT T2.first_name , T2.last_name FROM employees AS T1 JOIN employees AS T2 ON T1.id = T2.reports_to WHERE T1.first_name = "Nancy" AND T1.last_name = "Edwards";
+
+1
+1
+1
+extra pred: SELECT e.first_name, e.last_name  FROM employees e INNER JOIN customers c ON e.id = c.support_rep_id GROUP BY e.id  ORDER BY COUNT(c.id) DESC  LIMIT 1;
+extra gold: SELECT T1.first_name , T1.last_name FROM employees AS T1 JOIN customers AS T2 ON T1.id  =  T2.support_rep_id GROUP BY T1.id ORDER BY count(*) DESC LIMIT 1
+
+1
+extra pred: SELECT concat(first_name, ' ', last_name)  FROM employees WHERE id =  (SELECT support_rep_id  FROM customers GROUP BY support_rep_id ORDER BY count(*) DESC  LIMIT 1);
+extra gold: SELECT T1.first_name , T1.last_name FROM employees AS T1 JOIN customers AS T2 ON T1.id  =  T2.support_rep_id GROUP BY T1.id ORDER BY count(*) DESC LIMIT 1
+
+1
+1
+easy pred: SELECT COUNT(*) AS 'Number of Employees' FROM employees WHERE country = 'Canada';
+easy gold: SELECT count(*) FROM employees WHERE country = "Canada";
+
+1
+1
+medium pred: SELECT phone  FROM employees  WHERE first_name='Nancy' AND last_name='Edwards';
+medium gold: SELECT phone FROM employees WHERE first_name = "Nancy" AND last_name = "Edwards";
+
+0
+0
+medium pred: SELECT first_name, last_name FROM employees WHERE birth_date = (SELECT MIN(birth_date) FROM employees);
+medium gold: SELECT first_name , last_name FROM employees ORDER BY birth_date DESC LIMIT 1;
+
+1
+medium pred: SELECT first_name, last_name  FROM employees ORDER BY hire date  LIMIT 1;
+medium gold: SELECT first_name , last_name FROM employees ORDER BY birth_date DESC LIMIT 1;
+
+0
+0
+medium pred: SELECT e.first_name, e.last_name FROM employees e JOIN     (SELECT reports_to, MAX(hire_date) as max_date     FROM employees     GROUP BY reports_to) max_dates ON e.reports_to = max_dates.reports_to AND e.hire_date = max_dates.max_date ORDER BY e.hire_date DESC LIMIT 10;
+medium gold: SELECT first_name , last_name FROM employees ORDER BY hire_date ASC LIMIT 10;
+
+1
+1
+medium pred: SELECT city, COUNT(*) AS 'Number of Employees'  FROM employees WHERE title = 'IT Staff' GROUP BY city;
+medium gold: SELECT count(*) ,  city FROM employees WHERE title  =  'IT Staff' GROUP BY city
+
+0
+1
+medium pred: SELECT city, COUNT(*)  FROM employees  WHERE title LIKE '%IT%'  GROUP BY city;
+medium gold: SELECT count(*) ,  city FROM employees WHERE title  =  'IT Staff' GROUP BY city
+
+0
+1
+extra pred: SELECT e.first_name, e.last_name, COUNT(DISTINCT c.id) as 'Number of People' FROM employees e INNER JOIN customers c ON c.support_rep_id=e.id GROUP BY e.id ORDER BY COUNT(DISTINCT c.id) DESC LIMIT 1;
+extra gold: SELECT T2.first_name , T2.last_name ,  count(T1.reports_to) FROM employees AS T1 JOIN employees AS T2 ON T1.reports_to = T2.id GROUP BY T1.reports_to ORDER BY count(T1.reports_to) DESC LIMIT 1;
+
+0
+1
+extra pred: SELECT e.first_name, e.last_name, COUNT(e2.id) AS 'num_reporting' FROM employees e LEFT JOIN employees e2     ON e.id = e2.reports_to GROUP BY e.id
+extra gold: SELECT T2.first_name , T2.last_name ,  count(T1.reports_to) FROM employees AS T1 JOIN employees AS T2 ON T1.reports_to = T2.id GROUP BY T1.reports_to ORDER BY count(T1.reports_to) DESC LIMIT 1;
+
+1
+medium pred: SELECT COUNT(*) FROM invoices i  INNER JOIN customers c ON c.id = i.customer_id WHERE c.first_name = 'Lucas' AND c.last_name = 'Mancini';
+medium gold: SELECT count(*) FROM customers AS T1 JOIN invoices AS T2 ON T1.id = T2.customer_id WHERE T1.first_name = "Lucas" AND T1.last_name = "Mancini";
+
+0
+0
+1
+medium pred: SELECT COUNT(I.id) FROM Invoices I JOIN Customers C ON I.customer_id = C.id WHERE C.first_name = 'Luca' AND C.last_name = 'Mancini';
+medium gold: SELECT count(*) FROM customers AS T1 JOIN invoices AS T2 ON T1.id = T2.customer_id WHERE T1.first_name = "Lucas" AND T1.last_name = "Mancini";
+
+0
+0
+0
+0
+0
+medium pred: SELECT SUM(il.unit_price * il.quantity) AS Total  FROM invoice_lines il  JOIN invoices i ON i.id = il.invoice_id  JOIN customers c ON c.id = i.customer_id WHERE c.first_name = 'Lucas' AND c.last_name = 'Mancini';
+medium gold: SELECT sum(T2.total) FROM customers AS T1 JOIN invoices AS T2 ON T1.id = T2.customer_id WHERE T1.first_name = "Lucas" AND T1.last_name = "Mancini";
+
+0
+0
+0
+0
+0
+medium pred: SELECT SUM(il.unit_price * il.quantity) AS Total_Spent FROM invoice_lines AS il INNER JOIN invoices AS i ON il.invoice_id = i.id INNER JOIN customers AS c ON i.customer_id = c.id WHERE c.first_name = 'Lucas' and c.last_name = 'Mancini';
+medium gold: SELECT sum(T2.total) FROM customers AS T1 JOIN invoices AS T2 ON T1.id = T2.customer_id WHERE T1.first_name = "Lucas" AND T1.last_name = "Mancini";
+
+1
+1
+1
+1
+1
+1
+1
+easy pred: SELECT t.composer FROM tracks t WHERE t.name = 'Fast As a Shark';
+easy gold: SELECT composer FROM tracks WHERE name = "Fast As a Shark";
+
+1
+easy pred: SELECT c.name FROM tracks t INNER JOIN composers c ON t.composer = c.id WHERE t.name = 'Fast As a Shark';
+easy gold: SELECT composer FROM tracks WHERE name = "Fast As a Shark";
+
+1
+1
+easy pred: SELECT milliseconds  FROM tracks  WHERE name='Fast As a Shark';
+easy gold: SELECT milliseconds FROM tracks WHERE name = "Fast As a Shark";
+
+1
+medium pred: SELECT t.name FROM tracks t  JOIN genres g ON t.genre_id = g.id  WHERE g.name = 'Rock';
+medium gold: SELECT T2.name FROM genres AS T1 JOIN tracks AS T2 ON T1.id = T2.genre_id WHERE T1.name = "Rock";
+
+1
+medium pred: SELECT t.name FROM tracks t JOIN genres g ON t.genre_id = g.id WHERE g.name = 'Rock';
+medium gold: SELECT T2.name FROM genres AS T1 JOIN tracks AS T2 ON T1.id = T2.genre_id WHERE T1.name = "Rock";
+
+0
+0
+medium pred: SELECT albums.title FROM albums INNER JOIN tracks ON albums.id = tracks.album_id WHERE tracks.name = "Balls to the Wall"
+medium gold: SELECT T1.title FROM albums AS T1 JOIN tracks AS T2 ON T1.id = T2.genre_id WHERE T2.name = "Balls to the Wall";
+
+0
+0
+medium pred: SELECT a.title  FROM albums a  INNER JOIN tracks t ON t.album_id = a.id  WHERE t.name = 'Ball to the Wall';
+medium gold: SELECT T1.title FROM albums AS T1 JOIN tracks AS T2 ON T1.id = T2.genre_id WHERE T2.name = "Balls to the Wall";
+
+0
+0
+medium pred: SELECT t.name  FROM tracks t  INNER JOIN albums a   ON t.album_id = a.id  WHERE a.title = 'Balls to the Wall';
+medium gold: SELECT T2.name FROM albums AS T1 JOIN tracks AS T2 ON T1.id = T2.genre_id WHERE T1.title = "Balls to the Wall";
+
+0
+0
+1
+medium pred: SELECT a.title FROM albums a JOIN tracks t ON t.album_id = a.id GROUP BY a.title HAVING COUNT(t.id) > 10
+medium gold: SELECT T1.title FROM albums AS T1 JOIN tracks AS T2 ON T1.id = T2.album_id GROUP BY T1.id HAVING count(T1.id)  >  10;
+
+1
+medium pred: SELECT a.title FROM albums a  INNER JOIN tracks t ON a.id = t.album_id  GROUP BY a.title  HAVING COUNT(*) > 10;
+medium gold: SELECT T1.title FROM albums AS T1 JOIN tracks AS T2 ON T1.id = T2.album_id GROUP BY T1.id HAVING count(T1.id)  >  10;
+
+1
+hard pred: SELECT t.name FROM tracks t JOIN genres g ON t.genre_id = g.id JOIN media_types m ON t.media_type_id = m.id WHERE g.name = 'Rock' AND m.name = 'MPEG audio file';
+hard gold: SELECT T2.name FROM genres AS T1 JOIN tracks AS T2 ON T1.id = T2.genre_id JOIN media_types AS T3 ON T3.id = T2.media_type_id WHERE T1.name = "Rock" AND T3.name = "MPEG audio file";
+
+1
+1
+extra pred: SELECT t.name  FROM tracks t  JOIN genres g ON t.genre_id = g.id  JOIN media_types m ON t.media_type_id = m.id  WHERE g.name = 'Rock'  OR m.name='MPEG audio file';
+extra gold: SELECT T2.name FROM genres AS T1 JOIN tracks AS T2 ON T1.id = T2.genre_id JOIN media_types AS T3 ON T3.id = T2.media_type_id WHERE T1.name = "Rock" OR T3.name = "MPEG audio file";
+
+0
+0
+0
+0
+0
+extra pred: SELECT tracks.name FROM tracks INNER JOIN genres ON tracks.genre_id = genres.id INNER JOIN media_types ON tracks.media_type_id = media_types.id WHERE genres.name = 'Rock' AND media_types.name = 'MPEG';
+extra gold: SELECT T2.name FROM genres AS T1 JOIN tracks AS T2 ON T1.id = T2.genre_id JOIN media_types AS T3 ON T3.id = T2.media_type_id WHERE T1.name = "Rock" OR T3.name = "MPEG audio file";
+
+1
+hard pred: SELECT tracks.name  FROM tracks  INNER JOIN genres ON tracks.genre_id = genres.id  WHERE genres.name IN ('Rock', 'Jazz');
+hard gold: SELECT T2.name FROM genres AS T1 JOIN tracks AS T2 ON T1.id = T2.genre_id WHERE T1.name = "Rock" OR T1.name = "Jazz"
+
+1
+hard pred: SELECT t.name FROM tracks t JOIN genres g ON t.genre_id = g.id WHERE g.name IN ('Rock', 'Jazz');
+hard gold: SELECT T2.name FROM genres AS T1 JOIN tracks AS T2 ON T1.id = T2.genre_id WHERE T1.name = "Rock" OR T1.name = "Jazz"
+
+1
+hard pred: SELECT T.name  FROM tracks T INNER JOIN playlist_tracks PT  ON T.id=PT.track_id INNER JOIN playlists P ON P.id=PT.playlist_id WHERE P.name='Movies';
+hard gold: SELECT T1.name FROM tracks AS T1 JOIN playlist_tracks AS T2 ON T1.id = T2.track_id JOIN playlists AS T3 ON T3.id = T2.playlist_id WHERE T3.name = "Movies";
+
+1
+0
+0
+medium pred: SELECT p.name FROM playlists p JOIN playlist_tracks pt ON p.id = pt.playlist_id GROUP BY p.name HAVING COUNT(pt.track_id) > 100;
+medium gold: SELECT T2.name FROM playlist_tracks AS T1 JOIN playlists AS T2 ON T2.id = T1.playlist_id GROUP BY T1.playlist_id HAVING count(T1.track_id)  >  100;
+
+0
+0
+medium pred: SELECT p.name  FROM playlists p  INNER JOIN playlist_tracks pt ON p.id = pt.playlist_id  GROUP BY p.name HAVING COUNT(*) > 100;
+medium gold: SELECT T2.name FROM playlist_tracks AS T1 JOIN playlists AS T2 ON T2.id = T1.playlist_id GROUP BY T1.playlist_id HAVING count(T1.track_id)  >  100;
+
+0
+0
+0
+0
+0
+extra pred: SELECT t.*  FROM tracks t  INNER JOIN invoice_lines il ON t.id = il.track_id INNER JOIN invoices i ON il.invoice_id = i.id INNER JOIN customers c ON i.customer_id = c.id  WHERE c.first_name = 'Daan' AND c.last_name = 'Peeters';
+extra gold: SELECT T1.name FROM tracks AS T1 JOIN invoice_lines AS T2 ON T1.id = T2.track_id JOIN invoices AS T3 ON T3.id = T2.invoice_id JOIN customers AS T4 ON T4.id = T3.customer_id WHERE T4.first_name = "Daan" AND T4.last_name = "Peeters";
+
+0
+0
+1
+extra pred: SELECT t.name  FROM tracks t INNER JOIN invoice_lines il ON t.id = il.track_id INNER JOIN invoices i ON il.invoice_id = i.id INNER JOIN customers c ON i.customer_id = c.id WHERE c.first_name = 'Dean'  AND c.last_name = 'Peeters';
+extra gold: SELECT T1.name FROM tracks AS T1 JOIN invoice_lines AS T2 ON T1.id = T2.track_id JOIN invoices AS T3 ON T3.id = T2.invoice_id JOIN customers AS T4 ON T4.id = T3.customer_id WHERE T4.first_name = "Daan" AND T4.last_name = "Peeters";
+
+0
+0
+easy pred: SELECT t.name, il.unit_price * il.quantity AS 'Total Cost' FROM tracks t JOIN invoice_lines il ON il.track_id = t.id WHERE t.name = 'Fast As a Shark';
+easy gold: SELECT unit_price FROM tracks WHERE name = "Fast As a Shark";
+
+1
+easy pred: SELECT t.unit_price FROM tracks t  INNER JOIN albums a ON t.album_id = a.id  INNER JOIN artists ar ON a.artist_id = ar.id WHERE t.name = 'Fast As a Shark' AND ar.name = 'Accept';
+easy gold: SELECT unit_price FROM tracks WHERE name = "Fast As a Shark";
+
+1
+extra pred: SELECT t.name FROM tracks t INNER JOIN playlist_tracks pt ON t.id = pt.track_id INNER JOIN playlists p ON p.id = pt.playlist_id WHERE p.name = 'Movies' AND t.id NOT IN (     SELECT t2.id     FROM tracks t2     INNER JOIN playlist_tracks pt2 ON t2.id = pt2.track_id     INNER JOIN playlists p2 ON p2.id = pt2.playlist_id      WHERE p2.name = 'Music'  );
+extra gold: SELECT T1.name FROM tracks AS T1 JOIN playlist_tracks AS T2 ON T1.id  =  T2.track_id JOIN playlists AS T3 ON T2.playlist_id  =  T3.id WHERE T3.name  =  'Movies' EXCEPT SELECT T1.name FROM tracks AS T1 JOIN playlist_tracks AS T2 ON T1.id  =  T2.track_id JOIN playlists AS T3 ON T2.playlist_id  =  T3.id WHERE T3.name  =  'Music'
+
+1
+extra pred: SELECT t.name  FROM tracks t  JOIN playlist_tracks pt1 ON t.id = pt1.track_id  LEFT JOIN playlist_tracks pt2 ON t.id = pt2.track_id WHERE pt1.playlist_id = (SELECT id FROM playlists WHERE name = "Movies")    AND pt2.playlist_id != (SELECT id FROM playlists WHERE name = "Music");
+extra gold: SELECT T1.name FROM tracks AS T1 JOIN playlist_tracks AS T2 ON T1.id  =  T2.track_id JOIN playlists AS T3 ON T2.playlist_id  =  T3.id WHERE T3.name  =  'Movies' EXCEPT SELECT T1.name FROM tracks AS T1 JOIN playlist_tracks AS T2 ON T1.id  =  T2.track_id JOIN playlists AS T3 ON T2.playlist_id  =  T3.id WHERE T3.name  =  'Music'
+
+1
+extra pred: SELECT t.name FROM tracks t JOIN playlist_tracks p    ON t.id = p.track_id   JOIN genres g      ON t.genre_id = g.id WHERE g.name IN ('Movies', 'Music') GROUP BY t.name HAVING COUNT(DISTINCT p.playlist_id) > 1;
+extra gold: SELECT T1.name FROM tracks AS T1 JOIN playlist_tracks AS T2 ON T1.id  =  T2.track_id JOIN playlists AS T3 ON T2.playlist_id  =  T3.id WHERE T3.name  =  'Movies' INTERSECT SELECT T1.name FROM tracks AS T1 JOIN playlist_tracks AS T2 ON T1.id  =  T2.track_id JOIN playlists AS T3 ON T2.playlist_id  =  T3.id WHERE T3.name  =  'Music'
+
+0
+1
+extra pred: SELECT tracks.name FROM tracks JOIN playlist_tracks ON playlist_tracks.track_id = tracks.id JOIN playlists ON playlists.id = playlist_tracks.playlist_id WHERE playlists.name IN ('Movies', 'Music');
+extra gold: SELECT T1.name FROM tracks AS T1 JOIN playlist_tracks AS T2 ON T1.id  =  T2.track_id JOIN playlists AS T3 ON T2.playlist_id  =  T3.id WHERE T3.name  =  'Movies' INTERSECT SELECT T1.name FROM tracks AS T1 JOIN playlist_tracks AS T2 ON T1.id  =  T2.track_id JOIN playlists AS T3 ON T2.playlist_id  =  T3.id WHERE T3.name  =  'Music'
+
+1
+medium pred: SELECT genres.name AS genre, COUNT(tracks.id) AS num_tracks FROM genres JOIN tracks ON genres.id = tracks.genre_id GROUP BY genres.name;
+medium gold: SELECT count(*) ,  T1.name FROM genres AS T1 JOIN tracks AS T2 ON T1.id = T2.genre_id GROUP BY T1.name;
+
+1
+medium pred: SELECT genres.name, COUNT(tracks.id) as track_count FROM genres LEFT JOIN tracks ON genres.id = tracks.genre_id GROUP BY genres.name;
+medium gold: SELECT count(*) ,  T1.name FROM genres AS T1 JOIN tracks AS T2 ON T1.id = T2.genre_id GROUP BY T1.name;
+
+1
+0
+0
+easy pred: SELECT e.name, e.age  FROM editor e  JOIN journal_committee jc ON e.editor_id = jc.editor_id ORDER BY e.age ASC;
+easy gold: SELECT Name FROM editor ORDER BY Age ASC
+
+0
+0
+medium pred: SELECT e.name, e.age FROM editor e JOIN journal_committee jc     ON e.editor_id = jc.editor_id;
+medium gold: SELECT Name ,  Age FROM editor
+
+0
+0
+easy pred: SELECT e.name  FROM editor e  JOIN journal_committee jc ON jc.editor_id = e.editor_id  WHERE e.age > 25;
+easy gold: SELECT Name FROM editor WHERE Age  >  25
+
+0
+0
+0
+0
+0
+medium pred: SELECT e.name FROM editor e INNER JOIN journal_committee jc      ON e.editor_id = jc.editor_id  WHERE e.age IN (24,25)
+medium gold: SELECT Name FROM editor WHERE Age  =  24 OR Age  =  25
+
+1
+medium pred: SELECT name  FROM editor  WHERE age = (SELECT MIN(age) FROM editor);
+medium gold: SELECT Name FROM editor ORDER BY Age ASC LIMIT 1
+
+1
+medium pred: SELECT age, COUNT(*) AS num_editors FROM editor GROUP BY age
+medium gold: SELECT Age ,  COUNT(*) FROM editor GROUP BY Age
+
+1
+hard pred: SELECT age  FROM editor  INNER JOIN journal_committee ON editor.editor_id = journal_committee.editor_id  GROUP BY age  ORDER BY COUNT(*) DESC  LIMIT 1;
+hard gold: SELECT Age FROM editor GROUP BY Age ORDER BY COUNT(*) DESC LIMIT 1
+
+1
+1
+medium pred: SELECT e.name, j.theme FROM editor e INNER JOIN journal_committee jc ON e.editor_id = jc.editor_id INNER JOIN journal j ON jc.journal_id = j.journal_id;
+medium gold: SELECT T2.Name ,  T3.Theme FROM journal_committee AS T1 JOIN editor AS T2 ON T1.Editor_ID  =  T2.Editor_ID JOIN journal AS T3 ON T1.Journal_ID  =  T3.Journal_ID
+
+1
+1
+hard pred: SELECT e.name, e.age, j.theme  FROM editor e  INNER JOIN journal_committee jc ON e.editor_id = jc.editor_id  INNER JOIN journal j ON jc.journal_id = j.journal_id  ORDER BY j.theme ASC;
+hard gold: SELECT T2.Name ,  T2.age ,  T3.Theme FROM journal_committee AS T1 JOIN editor AS T2 ON T1.Editor_ID  =  T2.Editor_ID JOIN journal AS T3 ON T1.Journal_ID  =  T3.Journal_ID ORDER BY T3.Theme ASC
+
+1
+hard pred: SELECT e.name  FROM editor e  INNER JOIN journal_committee jc ON e.editor_id = jc.editor_id  INNER JOIN journal j ON jc.journal_id = j.journal_id  WHERE j.sales > 3000;
+hard gold: SELECT T2.Name FROM journal_committee AS T1 JOIN editor AS T2 ON T1.Editor_ID  =  T2.Editor_ID JOIN journal AS T3 ON T1.Journal_ID  =  T3.Journal_ID WHERE T3.Sales  >  3000
+
+1
+medium pred: SELECT      e.editor_id,      e.name,     COUNT(jc.work_type) AS 'Number of Journal Committees' FROM editor e INNER JOIN journal_committee jc ON e.editor_id = jc.editor_id GROUP BY      e.editor_id,      e.name;
+medium gold: SELECT T1.editor_id ,  T1.Name ,  COUNT(*) FROM editor AS T1 JOIN journal_committee AS T2 ON T1.Editor_ID  =  T2.Editor_ID GROUP BY T1.editor_id
+
+1
+medium pred: SELECT e.name FROM editor e JOIN journal_committee jc ON jc.editor_id = e.editor_id GROUP BY e.name HAVING COUNT(*) >= 2;
+medium gold: SELECT T1.Name FROM editor AS T1 JOIN journal_committee AS T2 ON T1.Editor_ID  =  T2.Editor_ID GROUP BY T1.Name HAVING COUNT(*)  >=  2
+
+1
+hard pred: SELECT e.name FROM editor e LEFT JOIN journal_committee jc ON e.editor_id = jc.editor_id WHERE jc.editor_id IS NULL;
+hard gold: SELECT Name FROM editor WHERE editor_id NOT IN (SELECT editor_id FROM journal_committee)
+
+0
+extra pred: SELECT j.date, j.theme, j.sales FROM journal j WHERE NOT EXISTS (         SELECT 1          FROM journal_committee jc         JOIN editor e ON jc.editor_id = e.editor_id         WHERE jc.journal_id = j.journal_id         AND (e.name = 'slty' OR e.name = 'rick' OR e.name = 'mon')     );
+extra gold: SELECT date ,  theme ,  sales FROM journal EXCEPT SELECT T1.date ,  T1.theme ,  T1.sales FROM journal AS T1 JOIN journal_committee AS T2 ON T1.journal_ID  =  T2.journal_ID
+
+1
+medium pred: SELECT AVG(j.sales) FROM journal j JOIN journal_committee jc ON j.journal_id = jc.journal_id JOIN editor e ON jc.editor_id = e.editor_id WHERE jc.work_type = 'Photo';
+medium gold: SELECT avg(T1.sales) FROM journal AS T1 JOIN journal_committee AS T2 ON T1.journal_ID  =  T2.journal_ID WHERE T2.work_type  =  'Photo'
+
+1
+1
+easy pred: SELECT COUNT(account_id)  FROM accounts;
+easy gold: SELECT count(*) FROM Accounts
+
+1
+medium pred: SELECT a.account_id, a.customer_id, a.account_name  FROM accounts a  INNER JOIN customers c ON c.customer_id = a.customer_id;
+medium gold: SELECT account_id ,  customer_id ,  account_name FROM Accounts
+
+1
+medium pred: SELECT accounts.account_id, accounts.customer_id, accounts.account_name  FROM accounts  INNER JOIN customers  ON accounts.customer_id = customers.customer_id;
+medium gold: SELECT account_id ,  customer_id ,  account_name FROM Accounts
+
+1
+1
+1
+medium pred: SELECT customers.customer_first_name, customers.customer_last_name, customers.customer_phone FROM customers INNER JOIN accounts ON customers.customer_id = accounts.customer_id WHERE accounts.account_name = '162';
+medium gold: SELECT T2.customer_first_name ,  T2.customer_last_name ,  T2.customer_phone FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE T1.account_name  =  "162"
+
+1
+medium pred: SELECT customers.customer_first_name, customers.customer_last_name, customers.customer_phone FROM customers INNER JOIN accounts ON customers.customer_id = accounts.customer_id WHERE accounts.account_name = '162';
+medium gold: SELECT T2.customer_first_name ,  T2.customer_last_name ,  T2.customer_phone FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE T1.account_name  =  "162"
+
+1
+medium pred: SELECT COUNT(*) FROM accounts a INNER JOIN customers c ON a.customer_id = c.customer_id WHERE c.customer_first_name = 'Art' AND c.customer_last_name = 'Turcotte';
+medium gold: SELECT count(*) FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE T2.customer_first_name  =  "Art" AND T2.customer_last_name  =  "Turcotte"
+
+1
+medium pred: SELECT COUNT(a.account_id) FROM accounts a INNER JOIN customers c ON a.customer_id = c.customer_id WHERE c.customer_first_name = 'Art' AND c.customer_last_name = 'Turcotte';
+medium gold: SELECT count(*) FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE T2.customer_first_name  =  "Art" AND T2.customer_last_name  =  "Turcotte"
+
+1
+medium pred: SELECT customers.customer_id, COUNT(accounts.account_id) AS num_accounts FROM customers INNER JOIN accounts ON customers.customer_id = accounts.customer_id GROUP BY customers.customer_id;
+medium gold: SELECT customer_id ,  count(*) FROM Accounts GROUP BY customer_id
+
+1
+medium pred: SELECT customers.customer_id, COUNT(accounts.account_id) AS num_accounts FROM customers INNER JOIN accounts ON customers.customer_id = accounts.customer_id GROUP BY customers.customer_id;
+medium gold: SELECT customer_id ,  count(*) FROM Accounts GROUP BY customer_id
+
+1
+hard pred: SELECT customer_id, COUNT(*) as 'Number of Accounts' FROM accounts GROUP BY customer_id ORDER BY COUNT(*) DESC LIMIT 1;
+hard gold: SELECT customer_id ,  count(*) FROM Accounts GROUP BY customer_id ORDER BY count(*) DESC LIMIT 1
+
+1
+hard pred: SELECT customers.customer_id, COUNT(accounts.account_id)  FROM customers  INNER JOIN accounts  ON customers.customer_id = accounts.customer_id  GROUP BY customers.customer_id  ORDER BY COUNT(accounts.account_id) DESC  LIMIT 1;
+hard gold: SELECT customer_id ,  count(*) FROM Accounts GROUP BY customer_id ORDER BY count(*) DESC LIMIT 1
+
+0
+0
+extra pred: SELECT customers.customer_first_name, customers.customer_last_name, customers.customer_id FROM customers LEFT JOIN accounts ON customers.customer_id = accounts.customer_id GROUP BY customers.customer_id ORDER BY COUNT(accounts.account_id) ASC LIMIT 1;
+extra gold: SELECT T2.customer_first_name ,  T2.customer_last_name ,  T1.customer_id FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id ORDER BY count(*) ASC LIMIT 1
+
+0
+0
+extra pred: SELECT customers.customer_first_name, customers.customer_last_name, customers.customer_id  FROM customers  LEFT JOIN accounts  ON customers.customer_id=accounts.customer_id  GROUP BY customers.customer_id  ORDER BY COUNT(accounts.account_id) ASC  LIMIT 1;
+extra gold: SELECT T2.customer_first_name ,  T2.customer_last_name ,  T1.customer_id FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id ORDER BY count(*) ASC LIMIT 1
+
+1
+extra pred: SELECT COUNT(*) FROM customers c LEFT JOIN accounts a ON c.customer_id = a.customer_id WHERE a.account_id IS NULL;
+extra gold: SELECT count(*) FROM Customers WHERE customer_id NOT IN (SELECT customer_id FROM Accounts)
+
+1
+extra pred: SELECT COUNT(*) FROM customers c LEFT JOIN accounts a   ON c.customer_id = a.customer_id WHERE a.customer_id IS NULL;
+extra gold: SELECT count(*) FROM Customers WHERE customer_id NOT IN (SELECT customer_id FROM Accounts)
+
+1
+extra pred: SELECT customer_first_name, customer_last_name  FROM customers  WHERE customer_id NOT IN (SELECT customer_id FROM accounts);
+extra gold: SELECT customer_first_name ,  customer_last_name FROM Customers EXCEPT SELECT T1.customer_first_name ,  T1.customer_last_name FROM Customers AS T1 JOIN Accounts AS T2 ON T1.customer_id  =  T2.customer_id
+
+1
+extra pred: SELECT customer_first_name, customer_last_name FROM customers WHERE customer_id NOT IN (SELECT customer_id FROM accounts);
+extra gold: SELECT customer_first_name ,  customer_last_name FROM Customers EXCEPT SELECT T1.customer_first_name ,  T1.customer_last_name FROM Customers AS T1 JOIN Accounts AS T2 ON T1.customer_id  =  T2.customer_id
+
+1
+medium pred: SELECT DISTINCT customer_first_name, customer_last_name FROM customers c INNER JOIN accounts a ON c.customer_id = a.customer_id;
+medium gold: SELECT DISTINCT T1.customer_first_name ,  T1.customer_last_name FROM Customers AS T1 JOIN Accounts AS T2 ON T1.customer_id  =  T2.customer_id
+
+1
+medium pred: SELECT customers.customer_first_name, customers.customer_last_name FROM accounts INNER JOIN customers ON customers.customer_id = accounts.customer_id;
+medium gold: SELECT DISTINCT T1.customer_first_name ,  T1.customer_last_name FROM Customers AS T1 JOIN Accounts AS T2 ON T1.customer_id  =  T2.customer_id
+
+1
+1
+easy pred: SELECT COUNT(DISTINCT(c.customer_id)) FROM customers c INNER JOIN accounts a ON c.customer_id = a.customer_id;
+easy gold: SELECT count(DISTINCT customer_id) FROM Accounts
+
+1
+easy pred: SELECT COUNT(DISTINCT customer_id)  FROM customers;
+easy gold: SELECT count(*) FROM Customers
+
+1
+easy pred: SELECT COUNT(DISTINCT customer_id) FROM customers;
+easy gold: SELECT count(*) FROM Customers
+
+1
+1
+medium pred: SELECT customers.customer_id, CONCAT(customers.customer_first_name, ' ', customers.customer_last_name) AS 'Full Name', customers.customer_phone FROM customers;
+medium gold: SELECT customer_id ,  customer_first_name ,  customer_last_name ,  customer_phone FROM Customers
+
+0
+0
+0
+0
+0
+medium pred: SELECT customers.customer_phone, customers.customer_email FROM customers INNER JOIN customers_cards ON customers.customer_id = customers_cards.customer_id INNER JOIN financial_transactions ON financial_transactions.card_id = customers_cards.card_id INNER JOIN accounts ON accounts.account_id = financial_transactions.account_id WHERE customers.customer_first_name = 'Aniyah' AND customers.customer_last_name = 'Feest'
+medium gold: SELECT customer_phone ,  customer_email FROM Customers WHERE customer_first_name  =  "Aniyah" AND customer_last_name  =  "Feest"
+
+1
+medium pred: SELECT c.customer_phone, c.customer_email FROM customers c WHERE c.customer_first_name = 'Aniyah'  AND c.customer_last_name = 'Feest';
+medium gold: SELECT customer_phone ,  customer_email FROM Customers WHERE customer_first_name  =  "Aniyah" AND customer_last_name  =  "Feest"
+
+1
+easy pred: SELECT COUNT(card_id)  FROM customers_cards;
+easy gold: SELECT count(*) FROM Customers_cards
+
+1
+easy pred: SELECT COUNT(*) AS 'Num_of_Customer_Cards' FROM customers_cards;
+easy gold: SELECT count(*) FROM Customers_cards
+
+1
+medium pred: SELECT  c.card_id,  c.customer_id,  c.card_type_code,  c.card_number FROM customers_cards c;
+medium gold: SELECT card_id ,  customer_id ,  card_type_code ,  card_number FROM Customers_cards
+
+1
+medium pred: SELECT customers_cards.card_id, customers_cards.customer_id, customers_cards.card_type_code, customers_cards.card_number FROM customers_cards INNER JOIN customers ON customers_cards.customer_id = customers.customer_id;
+medium gold: SELECT card_id ,  customer_id ,  card_type_code ,  card_number FROM Customers_cards
+
+1
+1
+1
+medium pred: SELECT customer_first_name, customer_last_name, customer_phone FROM customers c INNER JOIN customers_cards cc      ON c.customer_id = cc.customer_id WHERE cc.card_number = 4560596484842;
+medium gold: SELECT T2.customer_first_name ,  T2.customer_last_name ,  T2.customer_phone FROM Customers_cards AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE T1.card_number  =  "4560596484842"
+
+1
+medium pred: SELECT c.customer_first_name, c.customer_last_name, c.customer_phone FROM customers c JOIN customers_cards cc      ON c.customer_id = cc.customer_id WHERE cc.card_number = 4560596484842;
+medium gold: SELECT T2.customer_first_name ,  T2.customer_last_name ,  T2.customer_phone FROM Customers_cards AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE T1.card_number  =  "4560596484842"
+
+1
+medium pred: SELECT COUNT (*) FROM customers_cards WHERE customer_id IN     (SELECT customer_id     FROM customers     WHERE customer_first_name = 'Art'     AND customer_last_name = 'Turcotte')
+medium gold: SELECT count(*) FROM Customers_cards AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE T2.customer_first_name  =  "Art" AND T2.customer_last_name  =  "Turcotte"
+
+1
+medium pred: SELECT COUNT(*)  FROM customers c      INNER JOIN customers_cards cc          ON c.customer_id = cc.customer_id  WHERE c.customer_first_name = 'Art' AND c.customer_last_name = 'Turcotte';
+medium gold: SELECT count(*) FROM Customers_cards AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE T2.customer_first_name  =  "Art" AND T2.customer_last_name  =  "Turcotte"
+
+0
+1
+1
+1
+medium pred: SELECT COUNT(*)  FROM customers_cards  INNER JOIN customers  ON customers_cards.customer_id = customers.customer_id WHERE customer_first_name = 'Blanche' AND customer_last_name = 'Huels';
+medium gold: SELECT count(*) FROM Customers_cards AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE T2.customer_first_name  =  "Blanche" AND T2.customer_last_name  =  "Huels" AND T1.card_type_code  =  "Credit"
+
+1
+medium pred: SELECT COUNT(*) FROM customers AS c  INNER JOIN customers_cards AS cc ON c.customer_id = cc.customer_id WHERE c.customer_first_name = 'Blanche' AND c.customer_last_name = 'Huels';
+medium gold: SELECT count(*) FROM Customers_cards AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE T2.customer_first_name  =  "Blanche" AND T2.customer_last_name  =  "Huels" AND T1.card_type_code  =  "Credit"
+
+1
+medium pred: SELECT c.customer_id, COUNT(cc.card_id) FROM customers c JOIN customers_cards cc ON c.customer_id = cc.customer_id GROUP BY c.customer_id;
+medium gold: SELECT customer_id ,  count(*) FROM Customers_cards GROUP BY customer_id
+
+0
+0
+medium pred: SELECT c.customer_id, COUNT(cc.card_id) AS Num_Cards FROM customers c LEFT JOIN customers_cards cc ON c.customer_id = cc.customer_id GROUP BY c.customer_id;
+medium gold: SELECT customer_id ,  count(*) FROM Customers_cards GROUP BY customer_id
+
+1
+hard pred: SELECT customer_id, COUNT(card_id) AS num_cards FROM customers_cards  GROUP BY customer_id ORDER BY num_cards DESC LIMIT 1;
+hard gold: SELECT customer_id ,  count(*) FROM Customers_cards GROUP BY customer_id ORDER BY count(*) DESC LIMIT 1
+
+1
+hard pred: SELECT c.customer_id, COUNT(cc.card_id) AS number_of_cards FROM customers c  JOIN customers_cards cc ON c.customer_id = cc.customer_id GROUP BY c.customer_id ORDER BY number_of_cards DESC LIMIT 1;
+hard gold: SELECT customer_id ,  count(*) FROM Customers_cards GROUP BY customer_id ORDER BY count(*) DESC LIMIT 1
+
+1
+medium pred: SELECT c.customer_id, c.customer_first_name, c.customer_last_name FROM customers c INNER JOIN customers_cards cc ON c.customer_id = cc.customer_id GROUP BY c.customer_id, c.customer_first_name, c.customer_last_name HAVING COUNT(*) >= 2;
+medium gold: SELECT T1.customer_id ,  T2.customer_first_name ,  T2.customer_last_name FROM Customers_cards AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id HAVING count(*)  >=  2
+
+1
+medium pred: SELECT c.customer_id, c.customer_first_name, c.customer_last_name  FROM customers c  INNER JOIN customers_cards cc ON c.customer_id = cc.customer_id  GROUP BY c.customer_id  HAVING count(*) > 1;
+medium gold: SELECT T1.customer_id ,  T2.customer_first_name ,  T2.customer_last_name FROM Customers_cards AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id HAVING count(*)  >=  2
+
+1
+extra pred: SELECT customers.customer_id, customers.customer_first_name, customers.customer_last_name FROM customers   INNER JOIN accounts     ON customers.customer_id = accounts.customer_id GROUP BY customer_id ORDER BY COUNT(account_id) ASC LIMIT 1;
+extra gold: SELECT T1.customer_id ,  T2.customer_first_name ,  T2.customer_last_name FROM Customers_cards AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id ORDER BY count(*) ASC LIMIT 1
+
+1
+extra pred: SELECT c.customer_id, CONCAT(c.customer_first_name, ' ', c.customer_last_name) as full_name  FROM customers c  INNER JOIN accounts a on c.customer_id = a.customer_id GROUP BY a.customer_id ORDER BY COUNT(a.account_id) ASC LIMIT 1;
+extra gold: SELECT T1.customer_id ,  T2.customer_first_name ,  T2.customer_last_name FROM Customers_cards AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id ORDER BY count(*) ASC LIMIT 1
+
+1
+medium pred: SELECT card_type_code, COUNT(*) AS num_cards FROM customers_cards GROUP BY card_type_code;
+medium gold: SELECT card_type_code ,  count(*) FROM Customers_cards GROUP BY card_type_code
+
+1
+medium pred: SELECT card_type_code, COUNT(*) AS num_cards FROM customers_cards GROUP BY card_type_code;
+medium gold: SELECT card_type_code ,  count(*) FROM Customers_cards GROUP BY card_type_code
+
+0
+0
+hard pred: SELECT card_type_code, COUNT(card_id) FROM customers_cards GROUP BY card_type_code ORDER BY COUNT(card_id) DESC LIMIT 1;
+hard gold: SELECT card_type_code FROM Customers_cards GROUP BY card_type_code ORDER BY count(*) DESC LIMIT 1
+
+1
+1
+1
+1
+medium pred: SELECT c.card_type_code, COUNT(c.customer_id) AS "Number of Customers Holding Cards" FROM customers_cards c GROUP BY c.card_type_code;
+medium gold: SELECT card_type_code ,  count(DISTINCT customer_id) FROM Customers_cards GROUP BY card_type_code
+
+1
+medium pred: SELECT card_type_code, COUNT(customer_id) as 'Number of Different Customers Holding Each Type' FROM customers_cards GROUP BY card_type_code;
+medium gold: SELECT card_type_code ,  count(DISTINCT customer_id) FROM Customers_cards GROUP BY card_type_code
+
+0
+0
+extra pred: SELECT customers.customer_id, customers.customer_first_name FROM customers LEFT JOIN customers_cards ON customers.customer_id = customers_cards.customer_id WHERE customers_cards.card_id IS NULL;
+extra gold: SELECT customer_id ,  customer_first_name FROM Customers EXCEPT SELECT T1.customer_id ,  T2.customer_first_name FROM Customers_cards AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE card_type_code  =  "Credit"
+
+0
+0
+extra pred: SELECT c.customer_id, c.customer_first_name FROM customers c  LEFT JOIN customers_cards cc  ON c.customer_id = cc.customer_id WHERE cc.card_id IS NULL;
+extra gold: SELECT customer_id ,  customer_first_name FROM Customers EXCEPT SELECT T1.customer_id ,  T2.customer_first_name FROM Customers_cards AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE card_type_code  =  "Credit"
+
+1
+1
+1
+1
+1
+1
+1
+easy pred: SELECT COUNT(DISTINCT transaction_type) AS num_transaction_types FROM financial_transactions;
+easy gold: SELECT count(DISTINCT transaction_type) FROM Financial_Transactions
+
+1
+1
+medium pred: SELECT AVG(transaction_amount) AS average_transaction_amount, SUM(transaction_amount) AS total_transaction_amount  FROM financial_transactions;
+medium gold: SELECT avg(transaction_amount) ,  sum(transaction_amount) FROM Financial_transactions
+
+1
+medium pred: SELECT AVG(transaction_amount) AS avg_transaction_amount, SUM(transaction_amount) AS total_amount_transactions FROM financial_transactions;
+medium gold: SELECT avg(transaction_amount) ,  sum(transaction_amount) FROM Financial_transactions
+
+1
+medium pred: SELECT card_type_code, COUNT(transaction_id) FROM customers_cards  LEFT JOIN financial_transactions ON customers_cards.card_id = financial_transactions.card_id GROUP BY card_type_code;
+medium gold: SELECT T2.card_type_code ,  count(*) FROM Financial_transactions AS T1 JOIN Customers_cards AS T2 ON T1.card_id  =  T2.card_id GROUP BY T2.card_type_code
+
+1
+medium pred: SELECT card_type_code, COUNT(transaction_id) AS 'transaction_count' FROM customers_cards INNER JOIN financial_transactions ON customers_cards.card_id = financial_transactions.card_id GROUP BY card_type_code;
+medium gold: SELECT T2.card_type_code ,  count(*) FROM Financial_transactions AS T1 JOIN Customers_cards AS T2 ON T1.card_id  =  T2.card_id GROUP BY T2.card_type_code
+
+1
+medium pred: SELECT transaction_type, COUNT(*) as 'Number of Transactions' FROM financial_transactions GROUP BY transaction_type;
+medium gold: SELECT transaction_type ,  count(*) FROM Financial_transactions GROUP BY transaction_type
+
+1
+0
+0
+hard pred: SELECT transaction_type, SUM(transaction_amount) as total  FROM financial_transactions GROUP BY transaction_type ORDER BY total DESC LIMIT 1;
+hard gold: SELECT transaction_type FROM Financial_transactions GROUP BY transaction_type ORDER BY sum(transaction_amount) DESC LIMIT 1
+
+0
+0
+hard pred: SELECT transaction_type, SUM(transaction_amount) FROM financial_transactions GROUP BY transaction_type ORDER BY SUM(transaction_amount) DESC LIMIT 1;
+hard gold: SELECT transaction_type FROM Financial_transactions GROUP BY transaction_type ORDER BY sum(transaction_amount) DESC LIMIT 1
+
+1
+1
+medium pred: SELECT accounts.account_id, COUNT(financial_transactions.transaction_id) AS num_transactions FROM accounts  INNER JOIN financial_transactions ON accounts.account_id=financial_transactions.account_id GROUP BY accounts.account_id;
+medium gold: SELECT account_id ,  count(*) FROM Financial_transactions GROUP BY account_id
+
+1
+1
+1
+1
+medium pred: SELECT track.name, track.location FROM track ORDER BY track.name;
+medium gold: SELECT name ,  LOCATION FROM track
+
+1
+1
+medium pred: SELECT t.name, t.seating FROM track t WHERE t.year_opened > 2000 ORDER BY t.seating;
+medium gold: SELECT name ,  seating FROM track WHERE year_opened  >  2000 ORDER BY seating
+
+1
+medium pred: SELECT t.name, t.location, t.seating FROM track t ORDER BY t.year_opened DESC LIMIT 1
+medium gold: SELECT name ,  LOCATION ,  seating FROM track ORDER BY year_opened DESC LIMIT 1
+
+1
+1
+1
+medium pred: SELECT MIN(seating) as min_seating, MAX(seating) as max_seating, AVG(seating) as avg_seating FROM track;
+medium gold: SELECT min(seating) ,  max(seating) ,  avg(seating) FROM track
+
+1
+1
+extra pred: SELECT t.name, t.location, t.year_opened FROM track t JOIN (SELECT AVG(seating) as avg_seating FROM track) t2 ON t.seating > t2.avg_seating;
+extra gold: SELECT name ,  LOCATION ,  year_opened FROM track WHERE seating  >  (SELECT avg(seating) FROM track)
+
+1
+easy pred: SELECT DISTINCT t.location  FROM track t;
+easy gold: SELECT DISTINCT LOCATION FROM track
+
+1
+1
+1
+                     easy                 medium               hard                 extra                all                 
+count                203                  332                  137                  91                   763                 
+=====================   EXECUTION ACCURACY     =====================
+execution            0.852                0.810                0.599                0.604                0.759               
+
+====================== EXACT MATCHING ACCURACY =====================
+exact match          0.576                0.241                0.073                0.033                0.275               
+
+---------------------PARTIAL MATCHING ACCURACY----------------------
+select               0.885                0.851                0.818                0.909                0.866               
+select(no AGG)       0.899                0.851                0.818                0.909                0.872               
+where                0.929                0.689                0.429                0.455                0.725               
+where(no OP)         0.964                0.738                0.429                0.545                0.765               
+group(no Having)     0.769                0.900                0.800                0.667                0.826               
+group                0.385                0.800                0.800                0.667                0.674               
+order                0.938                0.812                0.529                1.000                0.779               
+and/or               1.000                0.907                0.947                0.868                0.934               
+IUEN                 0.000                0.000                1.000                0.000                1.000               
+keywords             0.928                0.850                0.576                0.636                0.829               
+---------------------- PARTIAL MATCHING RECALL ----------------------
+select               0.645                0.310                0.197                0.110                0.355               
+select(no AGG)       0.655                0.310                0.197                0.110                0.358               
+where                0.605                0.309                0.134                0.088                0.312               
+where(no OP)         0.628                0.331                0.134                0.105                0.329               
+group(no Having)     0.625                0.200                0.163                0.049                0.194               
+group                0.312                0.178                0.163                0.049                0.158               
+order                0.714                0.400                0.141                0.079                0.282               
+and/or               1.000                1.000                0.969                1.000                0.994               
+IUEN                 0.000                0.000                0.040                0.000                0.024               
+keywords             0.626                0.326                0.139                0.077                0.308               
+---------------------- PARTIAL MATCHING F1 --------------------------
+select               0.746                0.455                0.318                0.196                0.504               
+select(no AGG)       0.758                0.455                0.318                0.196                0.507               
+where                0.732                0.426                0.205                0.147                0.436               
+where(no OP)         0.761                0.457                0.205                0.176                0.461               
+group(no Having)     0.690                0.327                0.271                0.091                0.314               
+group                0.345                0.291                0.271                0.091                0.256               
+order                0.811                0.536                0.222                0.146                0.414               
+and/or               1.000                0.951                0.958                0.929                0.963               
+IUEN                 1.000                1.000                0.077                1.000                0.047               
+keywords             0.748                0.472                0.224                0.137                0.449               

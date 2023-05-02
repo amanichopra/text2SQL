@@ -130,3 +130,5 @@ dmypy.json
 
 data/
 output/
+temp/
+evaluation/predictions/
