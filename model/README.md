@@ -1,0 +1,1 @@
+These are the training scripts for our t5 models. We use t5 base and small models to fine-tune on various datasets, like Spider, WikiSQL, and CoSQL. With more time, we would have added better parameterization, as many of these scripts are redunant.

@@ -1,0 +1,1 @@
+This folder is an archive of preliminary work done on this project. The `archive/models/` directory contains notebooks to train the same models present in the main training scripts (located in root `models/`). The other scripts `evaluation.py` and `process_sql.py` are outdated evaluation scripts and utilities.
