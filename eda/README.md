@@ -1,0 +1,1 @@
+These notebooks contain EDA for our 2 primary datasets: Spider and CoSQL. Aman and Zicheng performed EDA on Spider, while Jingru performed EDA on CoSQL.
