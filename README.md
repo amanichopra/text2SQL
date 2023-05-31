@@ -1,4 +1,4 @@
-# S23-CUDSI-Loreal-Text2SQL
+# Text2SQL
 
 This is the capstone project for Columbia's MS in Data Science degree where we partner with L'Oreal, the world's largest cosmetics company that strives to offer everyone the best of beauty \cite{b1}, to build a text-to-SQL system that makes it easier for non-technical employees to query databases through natural language, rather than crafting SQL queries. There is significant research already done that uses pre-trained LLMs (large language models) to fine-tune on custom text-to-SQL datasets like Spider and CoSQL to achieve state-of-the-art performance on this task. We will train & benchmark these models, explore fine-tuning on L'Oreal's internal data, and aim to deploy a production-grade system that can be used to drive efficiency and reduce cost. 
 
